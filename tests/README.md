@@ -12,6 +12,10 @@ Directory entry point for project test cases and expected outputs.
 ## Local Conventions
 
 - Keep test fixtures small and focused.
-- Name input and expected-output files so their relationship is obvious.
+- Use `<area>_<case>.in` for input fixtures and `<area>_<case>.expected` for
+  expected output.
+- Use stable area names such as `lab1`, `lab23`, `lexer`, `parser`, `tac`, and
+  `e2e`.
+- Keep `<case>` lowercase, descriptive, and separated with underscores.
 - Prefer plain text fixtures that can be reviewed in diffs.
 - Do not store large generated logs here; keep only stable expected results.

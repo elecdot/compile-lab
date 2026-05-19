@@ -12,6 +12,8 @@ Use this directory for repeatable project workflows.
 
 ## Local Conventions
 
+- Treat `Makefile` as the public entry point; scripts should support Make
+  targets rather than replace them.
 - Prefer scripts for repeatable workflows that are too long for `Makefile`
   targets.
 - Keep scripts deterministic and runnable from the repository root.
