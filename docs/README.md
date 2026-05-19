@@ -11,6 +11,15 @@ and final lab report.
 - Report notes.
 - Design notes.
 
+## Plan
+
+- `lexer.md`: lexical rules, token kinds, invalid-number handling, and scanner
+  behavior.
+- `parser.md`: grammar choices, grammar rewrites, parser structure, and error
+  handling notes.
+- `tac.md`: syntax-directed translation notes, temporary and label strategy,
+  and three-address-code output conventions.
+
 ## Local Conventions
 
 - Start each document with a short purpose statement.

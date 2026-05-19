@@ -18,4 +18,5 @@ Directory entry point for project test cases and expected outputs.
   `e2e`.
 - Keep `<case>` lowercase, descriptive, and separated with underscores.
 - Prefer plain text fixtures that can be reviewed in diffs.
+- Keep illustrative samples in `examples/`; keep automated assertions here.
 - Do not store large generated logs here; keep only stable expected results.

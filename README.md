@@ -12,6 +12,7 @@ Repository for compiler-principles lab work.
 - `material/`: original lab handouts.
 - `docs/`: project notes and report materials.
 - `src/`: source code.
+- `examples/`: illustrative inputs, outputs, and usage samples.
 - `tests/`: test cases and expected outputs.
 - `scripts/`: helper scripts.
 - `util/`: project-specific utility files.
@@ -27,14 +28,6 @@ README files define the local purpose and conventions for that subtree.
 - Use `Makefile` as the project command entry point for build, test, run, and
   cleanup workflows.
 - Keep generated files out of Git unless they are required deliverables.
-
-## Plan
-
-1. Read the lab handouts and keep derived notes under `docs/`.
-2. Define the command-line interface and wire it through `Makefile` targets.
-3. Add focused test fixtures under `tests/` before implementing behavior.
-4. Implement compiler subsystems under `src/`.
-5. Keep documentation, tests, and command targets in sync with each change.
 
 ## Current State
 
