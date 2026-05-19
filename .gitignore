@@ -7,27 +7,38 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Agent and local tool caches
+.cache/
+
 # Build outputs
 build/
 dist/
 out/
 bin/
 obj/
+CMakeFiles/
+CMakeCache.txt
+cmake-build-*/
+compile_commands.json
 
 # Compiled artifacts
 *.o
 *.obj
+*.d
 *.a
 *.so
 *.dylib
 *.dll
 *.exe
+*.out
 
 # Logs and temporary files
 *.log
 *.tmp
 *.temp
+*.bak
 
 # Local environment
 .env
 .env.*
+*.local
