@@ -32,10 +32,11 @@ README files define the local purpose and conventions for that subtree.
 ## Current State
 
 - Repository structure and directory-level README files are initialized.
-- Source code, tests, and detailed design notes have not been added.
+- Imported Java implementations for lab 1 and lab 2 are present under `src/`.
+- Characterization fixtures cover the imported lab 1 and lab 2 sample behavior.
 
 ## Open Loops
 
 - [ ] Confirm implementation language and command-line interface.
-- [ ] Add source code after the project structure is accepted.
-- [ ] Add tests after the first implementation pass.
+- [ ] Refactor imported Java sources behind stable tests.
+- [ ] Add detailed design notes under `docs/`.

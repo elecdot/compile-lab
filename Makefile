@@ -1,5 +1,9 @@
 .DEFAULT_GOAL := help
 
+BUILD_DIR := build/classes
+JAVA_SOURCES := $(wildcard src/*.java)
+JAVAC ?= javac
+
 .PHONY: help build test clean
 
 help:
@@ -8,11 +12,15 @@ help:
 	@printf '%s\n' '  test   - run the project test suite'
 	@printf '%s\n' '  clean  - remove generated artifacts'
 
-build:
-	@printf '%s\n' 'build target is not implemented yet'
+build: $(BUILD_DIR)/.stamp
 
-test:
-	@printf '%s\n' 'test target is not implemented yet'
+$(BUILD_DIR)/.stamp: $(JAVA_SOURCES)
+	@mkdir -p $(BUILD_DIR)
+	$(JAVAC) -encoding UTF-8 -d $(BUILD_DIR) $(JAVA_SOURCES)
+	@touch $@
+
+test: build
+	@scripts/run_tests.sh
 
 clean:
-	@printf '%s\n' 'clean target is not implemented yet'
+	@rm -rf build

@@ -9,6 +9,11 @@ Directory entry point for implementation source code.
 - Code generation implementation.
 - Program entry point.
 
+## Entry Points
+
+- `Main.java`: imported lab 1 lexer entry point.
+- `Experiment2.java`: imported lab 2 parser entry point with its own lexer.
+
 ## Local Conventions
 
 - Keep source files organized by compiler subsystem.
