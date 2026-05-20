@@ -39,6 +39,5 @@ README files define the local purpose and conventions for that subtree.
 ## Open Loops
 
 - [ ] Confirm implementation language and command-line interface.
-- [ ] Align lab 3 three-address-code generation with the material sample.
 - [ ] Refactor imported Java sources behind stable tests.
 - [ ] Add detailed design notes under `docs/`.

@@ -10,17 +10,6 @@ t3 = t2 / z
 y = t3
 goto L3
 goto L1
-L0: t4=b*c
-t5=t4+d
-c=t5
-t2 = x * y
-t3 = t2 / z
-y = t3
-goto L6
-L5:
-goto L2
-L1:
-t4 = b * c
+L0: t4 = b * c
 t5 = t4 + d
 c = t5
-L8:

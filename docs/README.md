@@ -10,6 +10,7 @@ and final lab report.
 - Lab notes.
 - Report notes.
 - Design notes.
+- [Three-address code notes](tac.md).
 
 ## Plan
 

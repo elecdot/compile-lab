@@ -234,7 +234,9 @@ public class Experiment2 {
     static class CodeGenerator {
         private int tempCount = 1;
         private int labelCount = 1;
+        private boolean usedProgramNextLabel = false;
         private final List<String> codes = new ArrayList<>();
+        private final Set<String> referencedLabels = new HashSet<>();
 
         public String newTemp() {
             return "t" + tempCount++;
@@ -244,16 +246,57 @@ public class Experiment2 {
             return "L" + labelCount++;
         }
 
-        public void emit(String code) {
+        public String newProgramNextLabel() {
+            if (!usedProgramNextLabel) {
+                usedProgramNextLabel = true;
+                return "L0";
+            }
+
+            return newLabel();
+        }
+
+        public int emit(String code) {
             codes.add(code);
+            return codes.size() - 1;
         }
 
         public void emitLabel(String label) {
             codes.add(label + ":");
         }
 
+        public int emitGoto(String label) {
+            referencedLabels.add(label);
+            return emit("goto " + label);
+        }
+
+        public void markLabelReferenced(String label) {
+            referencedLabels.add(label);
+        }
+
+        public void patchGoto(int index, String label) {
+            referencedLabels.add(label);
+            codes.set(index, "goto " + label);
+        }
+
+        public boolean isLabelReferenced(String label) {
+            return referencedLabels.contains(label);
+        }
+
         public List<String> getCodes() {
-            return codes;
+            List<String> formatted = new ArrayList<>();
+
+            for (int i = 0; i < codes.size(); i++) {
+                String code = codes.get(i);
+
+                if (code.endsWith(":") && i + 1 < codes.size() && !codes.get(i + 1).endsWith(":")) {
+                    formatted.add(code + " " + codes.get(i + 1));
+                    i++;
+                } else {
+                    formatted.add(code);
+                }
+            }
+
+            return formatted;
         }
 
         public void printCodes() {
@@ -299,6 +342,14 @@ public class Experiment2 {
         private final boolean enableTreeOutput;
         private final boolean enableCodeGen;
         private final CodeGenerator codeGen;
+
+        static class ConditionJump {
+            int falseGotoIndex;
+
+            ConditionJump(int falseGotoIndex) {
+                this.falseGotoIndex = falseGotoIndex;
+            }
+        }
 
         Parser(Lexer lexer, boolean enableTreeOutput, boolean enableCodeGen, CodeGenerator codeGen) {
             this.lexer = lexer;
@@ -381,12 +432,12 @@ public class Experiment2 {
                 String nextLabel = null;
 
                 if (enableCodeGen) {
-                    nextLabel = codeGen.newLabel();
+                    nextLabel = codeGen.newProgramNextLabel();
                 }
 
                 parseL(nextLabel);
 
-                if (enableCodeGen) {
+                if (enableCodeGen && (lookahead != null || codeGen.isLabelReferenced(nextLabel))) {
                     codeGen.emitLabel(nextLabel);
                 }
             }
@@ -417,12 +468,16 @@ public class Experiment2 {
          * S -> while C do S
          */
         private void parseS(String nextLabel) {
+            parseS(nextLabel, null);
+        }
+
+        private void parseS(String nextLabel, String currentLabel) {
             if (check("IDN")) {
                 parseAssign();
             } else if (check("IF")) {
                 parseIf(nextLabel);
             } else if (check("WHILE")) {
-                parseWhile(nextLabel);
+                parseWhile(nextLabel, currentLabel);
             } else {
                 error("无法识别的语句开头");
             }
@@ -462,9 +517,8 @@ public class Experiment2 {
             match("IF");
 
             String trueLabel = enableCodeGen ? codeGen.newLabel() : null;
-            String falseLabel = enableCodeGen ? codeGen.newLabel() : null;
 
-            parseC(trueLabel, falseLabel);
+            ConditionJump condition = parseC(trueLabel, nextLabel);
 
             match("THEN");
 
@@ -472,14 +526,16 @@ public class Experiment2 {
                 codeGen.emitLabel(trueLabel);
             }
 
-            parseS(nextLabel);
+            parseS(nextLabel, trueLabel);
 
             if (check("ELSE")) {
                 printTree("S'", "S' -> else S");
                 indent++;
 
                 if (enableCodeGen) {
-                    codeGen.emit("goto " + nextLabel);
+                    String falseLabel = codeGen.newLabel();
+                    codeGen.patchGoto(condition.falseGotoIndex, falseLabel);
+                    codeGen.emitGoto(nextLabel);
                     codeGen.emitLabel(falseLabel);
                 }
 
@@ -492,10 +548,6 @@ public class Experiment2 {
                 indent++;
                 printTree("ε");
                 indent--;
-
-                if (enableCodeGen) {
-                    codeGen.emitLabel(falseLabel);
-                }
             }
 
             indent--;
@@ -504,15 +556,20 @@ public class Experiment2 {
         /**
          * S -> while C do S
          */
-        private void parseWhile(String nextLabel) {
+        private void parseWhile(String nextLabel, String currentLabel) {
             printTree("S", "S -> while C do S");
             indent++;
 
-            String beginLabel = enableCodeGen ? codeGen.newLabel() : null;
-            String trueLabel = enableCodeGen ? codeGen.newLabel() : null;
+            String beginLabel = enableCodeGen ? currentLabel : null;
+            String trueLabel = null;
 
             if (enableCodeGen) {
-                codeGen.emitLabel(beginLabel);
+                if (beginLabel == null) {
+                    beginLabel = codeGen.newLabel();
+                    codeGen.emitLabel(beginLabel);
+                }
+
+                trueLabel = codeGen.newLabel();
             }
 
             match("WHILE");
@@ -528,7 +585,7 @@ public class Experiment2 {
             parseS(beginLabel);
 
             if (enableCodeGen) {
-                codeGen.emit("goto " + beginLabel);
+                codeGen.emitGoto(beginLabel);
             }
 
             indent--;
@@ -541,7 +598,7 @@ public class Experiment2 {
          * if E1 relop E2 goto trueLabel
          * goto falseLabel
          */
-        private void parseC(String trueLabel, String falseLabel) {
+        private ConditionJump parseC(String trueLabel, String falseLabel) {
             printTree("C", "C -> E relop E");
             indent++;
 
@@ -551,12 +608,16 @@ public class Experiment2 {
 
             ExprAttr right = parseE();
 
+            int falseGotoIndex = -1;
+
             if (enableCodeGen) {
+                codeGen.markLabelReferenced(trueLabel);
                 codeGen.emit("if " + left.place + " " + op + " " + right.place + " goto " + trueLabel);
-                codeGen.emit("goto " + falseLabel);
+                falseGotoIndex = codeGen.emitGoto(falseLabel);
             }
 
             indent--;
+            return new ConditionJump(falseGotoIndex);
         }
 
         /**
@@ -639,7 +700,8 @@ public class Experiment2 {
 
                 if (enableCodeGen) {
                     String temp = codeGen.newTemp();
-                    codeGen.emit(temp + " = " + left.place + " " + op + " " + right.place);
+                    String assignOp = left.place.startsWith("t") ? " = " : " := ";
+                    codeGen.emit(temp + assignOp + left.place + " " + op + " " + right.place);
                     left = new ExprAttr(temp);
                 }
 

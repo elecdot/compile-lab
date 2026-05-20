@@ -29,9 +29,4 @@ run_case() {
 
 run_case lab1_sample Main
 run_case lab2_tree_sample Experiment2 --tree
-
-if [ "${RUN_LAB3_TAC:-0}" = "1" ]; then
-  run_case lab3_tac_sample Experiment2 --tac
-else
-  printf '%s\n' 'skip lab3_tac_sample (implementation is not material-aligned yet)'
-fi
+run_case lab3_tac_sample Experiment2 --tac

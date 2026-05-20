@@ -11,10 +11,7 @@ Directory entry point for project test cases and expected outputs.
 
 ## Local Conventions
 
-- Run the stable characterization suite through `make test`.
-- The lab 3 TAC material sample is tracked as an expected target, but is not
-  part of the default suite until the implementation is aligned with the lab
-  handout. Run it explicitly with `RUN_LAB3_TAC=1 make test`.
+- Run the characterization suite through `make test`.
 - Keep test fixtures small and focused.
 - Use `<area>_<case>.in` for input fixtures and `<area>_<case>.expected` for
   expected output.
