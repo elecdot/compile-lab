@@ -16,41 +16,6 @@ final class Lexer {
         this.length = input.length();
     }
 
-    private char peek() {
-        if (pos >= length) return '\0';
-        return input.charAt(pos);
-    }
-
-    private char next() {
-        if (pos >= length) return '\0';
-        return input.charAt(pos++);
-    }
-
-    private boolean isLetter(char c) {
-        return Character.isLetter(c);
-    }
-
-    private boolean isDigit(char c) {
-        return Character.isDigit(c);
-    }
-
-    private boolean isHexDigit(char c) {
-        return isDigit(c) ||
-                (c >= 'a' && c <= 'f') ||
-                (c >= 'A' && c <= 'F');
-    }
-
-    private boolean isIllegalHexLetter(char c) {
-        return (c >= 'g' && c <= 'z') ||
-                (c >= 'G' && c <= 'Z');
-    }
-
-    private void skipWhitespace() {
-        while (Character.isWhitespace(peek())) {
-            pos++;
-        }
-    }
-
     Token nextToken() {
         skipWhitespace();
 
@@ -58,142 +23,277 @@ final class Lexer {
             return null;
         }
 
-        char c = peek();
+        char c = input.charAt(pos);
 
-        if (isLetter(c)) {
-            StringBuilder sb = new StringBuilder();
-
-            while (isLetter(peek()) || isDigit(peek())) {
-                sb.append(next());
+        if (c == '>') {
+            if (peekNext('=')) {
+                pos += 2;
+                return new Token("GE", ">=", ">=");
             }
-
-            String word = sb.toString();
-
-            if (keywords.contains(word)) {
-                return new Token(word.toUpperCase(), word);
-            } else {
-                return new Token("IDN", word);
-            }
+            pos++;
+            return new Token("GT", ">", ">");
         }
 
-        if (isDigit(c)) {
-            return numberToken();
+        if (c == '<') {
+            if (peekNext('=')) {
+                pos += 2;
+                return new Token("LE", "<=", "<=");
+            } else if (peekNext('>')) {
+                pos += 2;
+                return new Token("NEQ", "<>", "<>");
+            }
+            pos++;
+            return new Token("LT", "<", "<");
         }
 
+        Token single = singleCharacterToken(c);
+        if (single != null) {
+            pos++;
+            return single;
+        }
+
+        int start = pos;
+        while (pos < length) {
+            char t = input.charAt(pos);
+            if (isWhitespace(t) || isOperatorOrDelimiterStart(t)) {
+                break;
+            }
+            pos++;
+        }
+
+        String lexeme = input.substring(start, pos);
+        return classifyLexeme(lexeme);
+    }
+
+    private Token singleCharacterToken(char c) {
         switch (c) {
             case '+':
-                next();
-                return new Token("ADD", "+");
+                return new Token("ADD", "+", "+");
             case '-':
-                next();
-                return new Token("SUB", "-");
+                return new Token("SUB", "-", "-");
             case '*':
-                next();
-                return new Token("MUL", "*");
+                return new Token("MUL", "*", "*");
             case '/':
-                next();
-                return new Token("DIV", "/");
-            case '(':
-                next();
-                return new Token("SLP", "(");
-            case ')':
-                next();
-                return new Token("SRP", ")");
-            case ';':
-                next();
-                return new Token("SEMI", ";");
+                return new Token("DIV", "/", "/");
             case '=':
-                next();
-                return new Token("EQ", "=");
-            case '>':
-                next();
-                if (peek() == '=') {
-                    next();
-                    return new Token("GE", ">=");
-                }
-                return new Token("GT", ">");
-            case '<':
-                next();
-                if (peek() == '=') {
-                    next();
-                    return new Token("LE", "<=");
-                } else if (peek() == '>') {
-                    next();
-                    return new Token("NEQ", "<>");
-                }
-                return new Token("LT", "<");
+                return new Token("EQ", "=", "=");
+            case '(':
+                return new Token("SLP", "(", "(");
+            case ')':
+                return new Token("SRP", ")", ")");
+            case ';':
+                return new Token("SEMI", ";", ";");
             default:
-                next();
-                return new Token("UNKNOWN", String.valueOf(c));
+                return null;
         }
     }
 
-    private Token numberToken() {
-        StringBuilder sb = new StringBuilder();
+    private Token classifyLexeme(String lexeme) {
+        if (lexeme == null || lexeme.length() == 0) {
+            return null;
+        }
 
-        if (peek() >= '1' && peek() <= '9') {
-            while (isDigit(peek())) {
-                sb.append(next());
+        String keyword = keywordType(lexeme);
+        if (keyword != null) {
+            return new Token(keyword, lexeme, lexeme);
+        }
+
+        if (isIdentifier(lexeme)) {
+            return new Token("IDN", lexeme, lexeme);
+        }
+
+        if (isDigit(lexeme.charAt(0))) {
+            return classifyNumber(lexeme);
+        }
+
+        return new Token("UNKNOWN", lexeme, lexeme);
+    }
+
+    private Token classifyNumber(String lexeme) {
+        if (lexeme.equals("0")) {
+            return new Token("DEC", "0", lexeme);
+        }
+
+        if (lexeme.length() >= 2 && lexeme.charAt(0) == '0' && (lexeme.charAt(1) == 'x' || lexeme.charAt(1) == 'X')) {
+            if (lexeme.length() == 2) {
+                return new Token("ILHEX", "-", lexeme);
             }
 
-            int value = Integer.parseInt(sb.toString());
-            return new Token("DEC", String.valueOf(value));
-        }
+            boolean allHex = true;
+            boolean hasIllegal = false;
 
-        sb.append(next());
-
-        if (!isDigit(peek()) && peek() != 'x' && peek() != 'X') {
-            return new Token("DEC", "0");
-        }
-
-        if (peek() == 'x' || peek() == 'X') {
-            sb.append(next());
-
-            boolean hasDigitOrLetter = false;
-            boolean illegal = false;
-
-            while (isDigit(peek()) || isLetter(peek())) {
-                char ch = peek();
-
-                if (isIllegalHexLetter(ch)) {
-                    illegal = true;
+            for (int i = 2; i < lexeme.length(); i++) {
+                char ch = lexeme.charAt(i);
+                if (isHexDigit(ch)) {
+                    continue;
                 }
+                allHex = false;
+                hasIllegal = true;
+            }
 
-                if (!isHexDigit(ch)) {
-                    illegal = true;
+            if (allHex) {
+                return new Token("HEX", convertBaseToDecimal(lexeme.substring(2), 16), lexeme);
+            }
+
+            if (hasIllegal) {
+                return new Token("ILHEX", "-", lexeme);
+            }
+        }
+
+        if (lexeme.length() >= 2 && lexeme.charAt(0) == '0') {
+            boolean allDigits = true;
+            boolean has89 = false;
+            boolean allOct = true;
+
+            for (int i = 1; i < lexeme.length(); i++) {
+                char ch = lexeme.charAt(i);
+                if (!isDigit(ch)) {
+                    allDigits = false;
+                    allOct = false;
+                    break;
                 }
-
-                hasDigitOrLetter = true;
-                sb.append(next());
+                if (ch == '8' || ch == '9') {
+                    has89 = true;
+                    allOct = false;
+                }
+                if (ch < '0' || ch > '7') {
+                    allOct = false;
+                }
             }
 
-            if (!hasDigitOrLetter || illegal) {
-                return new Token("ILHEX", "-");
-            } else {
-                String hexString = sb.substring(2);
-                int value = Integer.parseInt(hexString, 16);
-                return new Token("HEX", String.valueOf(value));
+            if (allDigits && has89) {
+                return new Token("ILOCT", "-", lexeme);
+            }
+
+            if (allDigits && allOct) {
+                return new Token("OCT", convertBaseToDecimal(lexeme.substring(1), 8), lexeme);
+            }
+
+            return new Token("ILNUM", "-", lexeme);
+        }
+
+        if (isDecimal(lexeme)) {
+            return new Token("DEC", lexeme, lexeme);
+        }
+
+        return new Token("ILNUM", "-", lexeme);
+    }
+
+    private void skipWhitespace() {
+        while (pos < length && isWhitespace(input.charAt(pos))) {
+            pos++;
+        }
+    }
+
+    private boolean peekNext(char expected) {
+        return pos + 1 < length && input.charAt(pos + 1) == expected;
+    }
+
+    private boolean isWhitespace(char c) {
+        return c == ' ' || c == '\t' || c == '\n' || c == '\r';
+    }
+
+    private boolean isOperatorOrDelimiterStart(char c) {
+        return c == '+' || c == '-' || c == '*' || c == '/' ||
+                c == '>' || c == '<' || c == '=' ||
+                c == '(' || c == ')' || c == ';';
+    }
+
+    private boolean isDigit(char c) {
+        return c >= '0' && c <= '9';
+    }
+
+    private boolean isAsciiLetter(char c) {
+        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+    }
+
+    private boolean isHexDigit(char c) {
+        return (c >= '0' && c <= '9') ||
+                (c >= 'a' && c <= 'f') ||
+                (c >= 'A' && c <= 'F');
+    }
+
+    private boolean isIdentifier(String text) {
+        if (text.length() == 0) return false;
+
+        char first = text.charAt(0);
+        if (!(Character.isLetter(first) || first == '_')) {
+            return false;
+        }
+
+        for (int i = 1; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (!(Character.isLetterOrDigit(c) || c == '_')) {
+                return false;
             }
         }
 
-        boolean illegalOct = false;
+        return true;
+    }
 
-        while (isDigit(peek())) {
-            char ch = peek();
+    private boolean isDecimal(String text) {
+        if (text.length() == 0) return false;
+        if (text.equals("0")) return true;
 
-            if (ch == '8' || ch == '9') {
-                illegalOct = true;
+        if (text.charAt(0) < '1' || text.charAt(0) > '9') {
+            return false;
+        }
+
+        for (int i = 1; i < text.length(); i++) {
+            if (!isDigit(text.charAt(i))) {
+                return false;
             }
+        }
+        return true;
+    }
 
-            sb.append(next());
+    private String keywordType(String text) {
+        if (keywords.contains(text)) {
+            return text.toUpperCase();
+        }
+        return null;
+    }
+
+    private String convertBaseToDecimal(String text, int base) {
+        String result = "0";
+        for (int i = 0; i < text.length(); i++) {
+            int digit = digitValue(text.charAt(i));
+            result = multiplyAndAdd(result, base, digit);
+        }
+        return trimLeadingZeros(result);
+    }
+
+    private int digitValue(char c) {
+        if (c >= '0' && c <= '9') return c - '0';
+        if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+        if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+        return 0;
+    }
+
+    private String multiplyAndAdd(String dec, int base, int add) {
+        StringBuilder rev = new StringBuilder();
+        int carry = add;
+
+        for (int i = dec.length() - 1; i >= 0; i--) {
+            int d = dec.charAt(i) - '0';
+            int value = d * base + carry;
+            rev.append((char) ('0' + (value % 10)));
+            carry = value / 10;
         }
 
-        if (illegalOct) {
-            return new Token("ILOCT", "-");
-        } else {
-            String octString = sb.toString();
-            int value = Integer.parseInt(octString, 8);
-            return new Token("OCT", String.valueOf(value));
+        while (carry > 0) {
+            rev.append((char) ('0' + (carry % 10)));
+            carry /= 10;
         }
+
+        return rev.reverse().toString();
+    }
+
+    private String trimLeadingZeros(String text) {
+        int i = 0;
+        while (i < text.length() - 1 && text.charAt(i) == '0') {
+            i++;
+        }
+        return text.substring(i);
     }
 }
