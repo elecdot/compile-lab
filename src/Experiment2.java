@@ -3,6 +3,9 @@ import java.util.*;
 
 public class Experiment2 {
 
+    /**
+     * Token 类
+     */
     static class Token {
         String type;
         String value;
@@ -79,7 +82,7 @@ public class Experiment2 {
 
             char c = peek();
 
-            // 识别标识符或关键字
+            // 标识符或关键字
             if (isLetter(c)) {
                 StringBuilder sb = new StringBuilder();
 
@@ -96,12 +99,12 @@ public class Experiment2 {
                 }
             }
 
-            // 识别整数
+            // 整数
             if (isDigit(c)) {
                 return numberToken();
             }
 
-            // 识别运算符和分隔符
+            // 运算符和分隔符
             switch (c) {
                 case '+':
                     next();
@@ -226,39 +229,115 @@ public class Experiment2 {
     }
 
     /**
-     * 实验二：递归下降语法分析器
+     * 实验三：代码生成器
+     */
+    static class CodeGenerator {
+        private int tempCount = 1;
+        private int labelCount = 1;
+        private final List<String> codes = new ArrayList<>();
+
+        public String newTemp() {
+            return "t" + tempCount++;
+        }
+
+        public String newLabel() {
+            return "L" + labelCount++;
+        }
+
+        public void emit(String code) {
+            codes.add(code);
+        }
+
+        public void emitLabel(String label) {
+            codes.add(label + ":");
+        }
+
+        public List<String> getCodes() {
+            return codes;
+        }
+
+        public void printCodes() {
+            for (String code : codes) {
+                System.out.println(code);
+            }
+        }
+    }
+
+    /**
+     * 表达式属性
      *
-     * 消除左递归后的文法：
+     * place 表示当前表达式的结果位置。
      *
-     * P  -> L P | L
-     * L  -> S ;
+     * 例如：
+     * b * c 生成 t1 = b * c
+     * 那么 b * c 的 place 就是 t1。
+     */
+    static class ExprAttr {
+        String place;
+
+        ExprAttr(String place) {
+            this.place = place;
+        }
+    }
+
+    /**
+     * 实验二 + 实验三共用 Parser
      *
-     * S  -> id = E
-     * S  -> if C then S
-     * S  -> if C then S else S
-     * S  -> while C do S
+     * enableTreeOutput:
+     * true  表示输出实验二语法树
+     * false 表示不输出语法树
      *
-     * C  -> E relop E
-     *
-     * E  -> T E'
-     * E' -> + T E' | - T E' | ε
-     *
-     * T  -> F T'
-     * T' -> * F T' | / F T' | ε
-     *
-     * F  -> ( E ) | id | int8 | int10 | int16
+     * enableCodeGen:
+     * true  表示生成实验三三地址代码
+     * false 表示只做语法分析
      */
     static class Parser {
         private final Lexer lexer;
         private Token lookahead;
+        private int indent = 0;
 
-        Parser(Lexer lexer) {
+        private final boolean enableTreeOutput;
+        private final boolean enableCodeGen;
+        private final CodeGenerator codeGen;
+
+        Parser(Lexer lexer, boolean enableTreeOutput, boolean enableCodeGen, CodeGenerator codeGen) {
             this.lexer = lexer;
+            this.enableTreeOutput = enableTreeOutput;
+            this.enableCodeGen = enableCodeGen;
+            this.codeGen = codeGen;
             this.lookahead = lexer.nextToken();
         }
 
-        private void printProduction(String production) {
-            System.out.println(production);
+        private void printTree(String text) {
+            if (!enableTreeOutput) return;
+
+            for (int i = 0; i < indent; i++) {
+                System.out.print("  ");
+            }
+
+            System.out.println(text);
+        }
+
+        private void printTree(String text, String production) {
+            if (!enableTreeOutput) return;
+
+            for (int i = 0; i < indent; i++) {
+                System.out.print("  ");
+            }
+
+            System.out.println(text + "    [" + production + "]");
+        }
+
+        private String tokenDisplay(Token token) {
+            if (token == null) {
+                return "EOF";
+            }
+
+            if (token.value == null || token.value.equals("-")) {
+                return token.type;
+            }
+
+            return token.type + " : " + token.value;
         }
 
         private void error(String message) {
@@ -266,7 +345,9 @@ public class Experiment2 {
                 throw new RuntimeException("语法错误：" + message + "，当前已经到达文件结束");
             } else {
                 throw new RuntimeException(
-                        "语法错误：" + message + "，当前单词为：" + lookahead.type + "，属性值：" + lookahead.value
+                        "语法错误：" + message +
+                                "，当前单词为：" + lookahead.type +
+                                "，属性值：" + lookahead.value
                 );
             }
         }
@@ -277,6 +358,7 @@ public class Experiment2 {
 
         private void match(String type) {
             if (check(type)) {
+                printTree(tokenDisplay(lookahead));
                 lookahead = lexer.nextToken();
             } else {
                 String current = lookahead == null ? "EOF" : lookahead.type;
@@ -285,167 +367,336 @@ public class Experiment2 {
         }
 
         /**
-         * P -> L P | L
-         *
-         * 源程序可以包含多个语句，所以这里用 while 循环反复分析 L。
+         * P -> L+
          */
         public void parseProgram() {
-            printProduction("P -> L P | L");
+            printTree("P", "P -> L+");
+            indent++;
 
-            while (lookahead != null) {
-                parseL();
+            if (lookahead == null) {
+                error("程序为空");
             }
 
-            System.out.println("语法分析成功！");
+            while (lookahead != null) {
+                String nextLabel = null;
+
+                if (enableCodeGen) {
+                    nextLabel = codeGen.newLabel();
+                }
+
+                parseL(nextLabel);
+
+                if (enableCodeGen) {
+                    codeGen.emitLabel(nextLabel);
+                }
+            }
+
+            indent--;
+
+            if (enableTreeOutput) {
+                System.out.println("语法分析成功！");
+            }
         }
 
         /**
          * L -> S ;
          */
-        private void parseL() {
-            printProduction("L -> S ;");
-            parseS();
+        private void parseL(String nextLabel) {
+            printTree("L", "L -> S ;");
+            indent++;
+
+            parseS(nextLabel);
             match("SEMI");
+
+            indent--;
         }
 
         /**
          * S -> id = E
-         * S -> if C then S
-         * S -> if C then S else S
+         * S -> if C then S S'
          * S -> while C do S
          */
-        private void parseS() {
+        private void parseS(String nextLabel) {
             if (check("IDN")) {
-                printProduction("S -> id = E");
-                match("IDN");
-                match("EQ");
-                parseE();
+                parseAssign();
             } else if (check("IF")) {
-                parseIf();
+                parseIf(nextLabel);
             } else if (check("WHILE")) {
-                parseWhile();
+                parseWhile(nextLabel);
             } else {
                 error("无法识别的语句开头");
             }
         }
 
         /**
-         * if 语句
-         *
-         * S -> if C then S
-         * S -> if C then S else S
+         * S -> id = E
          */
-        private void parseIf() {
+        private void parseAssign() {
+            printTree("S", "S -> id = E");
+            indent++;
+
+            String id = lookahead.value;
+
+            match("IDN");
+            match("EQ");
+
+            ExprAttr expr = parseE();
+
+            if (enableCodeGen) {
+                codeGen.emit(id + " = " + expr.place);
+            }
+
+            indent--;
+        }
+
+        /**
+         * S -> if C then S S'
+         *
+         * S' -> else S
+         * S' -> ε
+         */
+        private void parseIf(String nextLabel) {
+            printTree("S", "S -> if C then S S'");
+            indent++;
+
             match("IF");
-            parseC();
+
+            String trueLabel = enableCodeGen ? codeGen.newLabel() : null;
+            String falseLabel = enableCodeGen ? codeGen.newLabel() : null;
+
+            parseC(trueLabel, falseLabel);
+
             match("THEN");
-            parseS();
+
+            if (enableCodeGen) {
+                codeGen.emitLabel(trueLabel);
+            }
+
+            parseS(nextLabel);
 
             if (check("ELSE")) {
-                printProduction("S -> if C then S else S");
+                printTree("S'", "S' -> else S");
+                indent++;
+
+                if (enableCodeGen) {
+                    codeGen.emit("goto " + nextLabel);
+                    codeGen.emitLabel(falseLabel);
+                }
+
                 match("ELSE");
-                parseS();
+                parseS(nextLabel);
+
+                indent--;
             } else {
-                printProduction("S -> if C then S");
+                printTree("S'", "S' -> ε");
+                indent++;
+                printTree("ε");
+                indent--;
+
+                if (enableCodeGen) {
+                    codeGen.emitLabel(falseLabel);
+                }
             }
+
+            indent--;
         }
 
         /**
-         * while 语句
-         *
          * S -> while C do S
          */
-        private void parseWhile() {
-            printProduction("S -> while C do S");
+        private void parseWhile(String nextLabel) {
+            printTree("S", "S -> while C do S");
+            indent++;
+
+            String beginLabel = enableCodeGen ? codeGen.newLabel() : null;
+            String trueLabel = enableCodeGen ? codeGen.newLabel() : null;
+
+            if (enableCodeGen) {
+                codeGen.emitLabel(beginLabel);
+            }
+
             match("WHILE");
-            parseC();
+
+            parseC(trueLabel, nextLabel);
+
             match("DO");
-            parseS();
+
+            if (enableCodeGen) {
+                codeGen.emitLabel(trueLabel);
+            }
+
+            parseS(beginLabel);
+
+            if (enableCodeGen) {
+                codeGen.emit("goto " + beginLabel);
+            }
+
+            indent--;
         }
 
         /**
-         * C -> E > E
-         * C -> E < E
-         * C -> E = E
+         * C -> E relop E
+         *
+         * 实验三中生成：
+         * if E1 relop E2 goto trueLabel
+         * goto falseLabel
          */
-        private void parseC() {
-            printProduction("C -> E relop E");
-            parseE();
+        private void parseC(String trueLabel, String falseLabel) {
+            printTree("C", "C -> E relop E");
+            indent++;
 
-            if (check("GT")) {
-                printProduction("relop -> >");
-                match("GT");
-            } else if (check("LT")) {
-                printProduction("relop -> <");
-                match("LT");
-            } else if (check("EQ")) {
-                printProduction("relop -> =");
-                match("EQ");
-            } else {
-                error("条件表达式中缺少关系运算符 >、< 或 =");
+            ExprAttr left = parseE();
+
+            String op = parseRelop();
+
+            ExprAttr right = parseE();
+
+            if (enableCodeGen) {
+                codeGen.emit("if " + left.place + " " + op + " " + right.place + " goto " + trueLabel);
+                codeGen.emit("goto " + falseLabel);
             }
 
-            parseE();
+            indent--;
+        }
+
+        /**
+         * relop -> > | < | = | >= | <= | <>
+         */
+        private String parseRelop() {
+            if (check("GT")) {
+                printTree("relop", "relop -> >");
+                indent++;
+                String op = lookahead.value;
+                match("GT");
+                indent--;
+                return op;
+            } else if (check("LT")) {
+                printTree("relop", "relop -> <");
+                indent++;
+                String op = lookahead.value;
+                match("LT");
+                indent--;
+                return op;
+            } else if (check("EQ")) {
+                printTree("relop", "relop -> =");
+                indent++;
+                String op = lookahead.value;
+                match("EQ");
+                indent--;
+                return op;
+            } else if (check("GE")) {
+                printTree("relop", "relop -> >=");
+                indent++;
+                String op = lookahead.value;
+                match("GE");
+                indent--;
+                return op;
+            } else if (check("LE")) {
+                printTree("relop", "relop -> <=");
+                indent++;
+                String op = lookahead.value;
+                match("LE");
+                indent--;
+                return op;
+            } else if (check("NEQ")) {
+                printTree("relop", "relop -> <>");
+                indent++;
+                String op = lookahead.value;
+                match("NEQ");
+                indent--;
+                return op;
+            } else {
+                error("条件表达式中缺少关系运算符");
+                return null;
+            }
         }
 
         /**
          * E -> T E'
+         *
+         * 用 while 实现 E'，同时生成加减法三地址代码。
          */
-        private void parseE() {
-            printProduction("E -> T E'");
-            parseT();
-            parseEPrime();
-        }
+        private ExprAttr parseE() {
+            printTree("E", "E -> T E'");
+            indent++;
 
-        /**
-         * E' -> + T E'
-         * E' -> - T E'
-         * E' -> ε
-         */
-        private void parseEPrime() {
-            if (check("ADD")) {
-                printProduction("E' -> + T E'");
-                match("ADD");
-                parseT();
-                parseEPrime();
-            } else if (check("SUB")) {
-                printProduction("E' -> - T E'");
-                match("SUB");
-                parseT();
-                parseEPrime();
-            } else {
-                printProduction("E' -> ε");
+            ExprAttr left = parseT();
+
+            while (check("ADD") || check("SUB")) {
+                String op = lookahead.value;
+
+                if (check("ADD")) {
+                    printTree("E'", "E' -> + T E'");
+                    indent++;
+                    match("ADD");
+                } else {
+                    printTree("E'", "E' -> - T E'");
+                    indent++;
+                    match("SUB");
+                }
+
+                ExprAttr right = parseT();
+
+                if (enableCodeGen) {
+                    String temp = codeGen.newTemp();
+                    codeGen.emit(temp + " = " + left.place + " " + op + " " + right.place);
+                    left = new ExprAttr(temp);
+                }
+
+                indent--;
             }
+
+            printTree("E'", "E' -> ε");
+            indent++;
+            printTree("ε");
+            indent--;
+
+            indent--;
+            return left;
         }
 
         /**
          * T -> F T'
+         *
+         * 用 while 实现 T'，同时生成乘除法三地址代码。
          */
-        private void parseT() {
-            printProduction("T -> F T'");
-            parseF();
-            parseTPrime();
-        }
+        private ExprAttr parseT() {
+            printTree("T", "T -> F T'");
+            indent++;
 
-        /**
-         * T' -> * F T'
-         * T' -> / F T'
-         * T' -> ε
-         */
-        private void parseTPrime() {
-            if (check("MUL")) {
-                printProduction("T' -> * F T'");
-                match("MUL");
-                parseF();
-                parseTPrime();
-            } else if (check("DIV")) {
-                printProduction("T' -> / F T'");
-                match("DIV");
-                parseF();
-                parseTPrime();
-            } else {
-                printProduction("T' -> ε");
+            ExprAttr left = parseF();
+
+            while (check("MUL") || check("DIV")) {
+                String op = lookahead.value;
+
+                if (check("MUL")) {
+                    printTree("T'", "T' -> * F T'");
+                    indent++;
+                    match("MUL");
+                } else {
+                    printTree("T'", "T' -> / F T'");
+                    indent++;
+                    match("DIV");
+                }
+
+                ExprAttr right = parseF();
+
+                if (enableCodeGen) {
+                    String temp = codeGen.newTemp();
+                    codeGen.emit(temp + " = " + left.place + " " + op + " " + right.place);
+                    left = new ExprAttr(temp);
+                }
+
+                indent--;
             }
+
+            printTree("T'", "T' -> ε");
+            indent++;
+            printTree("ε");
+            indent--;
+
+            indent--;
+            return left;
         }
 
         /**
@@ -455,34 +706,109 @@ public class Experiment2 {
          * F -> int10
          * F -> int16
          */
-        private void parseF() {
+        private ExprAttr parseF() {
             if (check("SLP")) {
-                printProduction("F -> ( E )");
+                printTree("F", "F -> ( E )");
+                indent++;
+
                 match("SLP");
-                parseE();
+                ExprAttr expr = parseE();
                 match("SRP");
+
+                indent--;
+                return expr;
+
             } else if (check("IDN")) {
-                printProduction("F -> id");
+                printTree("F", "F -> id");
+                indent++;
+
+                String place = lookahead.value;
                 match("IDN");
+
+                indent--;
+                return new ExprAttr(place);
+
             } else if (check("OCT")) {
-                printProduction("F -> int8");
+                printTree("F", "F -> int8");
+                indent++;
+
+                String place = lookahead.value;
                 match("OCT");
+
+                indent--;
+                return new ExprAttr(place);
+
             } else if (check("DEC")) {
-                printProduction("F -> int10");
+                printTree("F", "F -> int10");
+                indent++;
+
+                String place = lookahead.value;
                 match("DEC");
+
+                indent--;
+                return new ExprAttr(place);
+
             } else if (check("HEX")) {
-                printProduction("F -> int16");
+                printTree("F", "F -> int16");
+                indent++;
+
+                String place = lookahead.value;
                 match("HEX");
+
+                indent--;
+                return new ExprAttr(place);
+
             } else if (check("ILOCT")) {
                 error("非法八进制整数");
+                return null;
+
             } else if (check("ILHEX")) {
                 error("非法十六进制整数");
+                return null;
+
             } else {
                 error("因子错误，期望 id、整数或括号表达式");
+                return null;
             }
         }
     }
 
+    /**
+     * 实验二接口：只打印语法树，不生成三地址代码
+     */
+    public static void parseAndPrintTree(String source) {
+        Lexer lexer = new Lexer(source);
+        Parser parser = new Parser(lexer, true, false, null);
+        parser.parseProgram();
+    }
+
+    /**
+     * 实验三接口：生成三地址代码
+     *
+     * 这个接口是实验三真正有用的接口。
+     * 它不返回 success/message，而是直接返回三地址代码。
+     *
+     * 如果语法错误，会抛出 RuntimeException。
+     */
+    public static List<String> generateCodeForExperiment3(String source) {
+        Lexer lexer = new Lexer(source);
+        CodeGenerator codeGen = new CodeGenerator();
+
+        Parser parser = new Parser(lexer, false, true, codeGen);
+        parser.parseProgram();
+
+        return codeGen.getCodes();
+    }
+
+    /**
+     * main：默认作为实验三运行，输出三地址代码
+     *
+     * 如果你想看实验二语法树，可以把：
+     * List<String> codes = generateCodeForExperiment3(source.toString());
+     *
+     * 换成：
+     * parseAndPrintTree(source.toString());
+     */
     public static void main(String[] args) throws IOException {
         StringBuilder source = new StringBuilder();
 
@@ -493,11 +819,13 @@ public class Experiment2 {
             source.append(line).append('\n');
         }
 
-        Lexer lexer = new Lexer(source.toString());
-        Parser parser = new Parser(lexer);
-
         try {
-            parser.parseProgram();
+            List<String> codes = generateCodeForExperiment3(source.toString());
+
+            for (String code : codes) {
+                System.out.println(code);
+            }
+
         } catch (RuntimeException e) {
             System.out.println(e.getMessage());
         }
