@@ -1,0 +1,131 @@
+P    [P -> L+]
+  L    [L -> S ;]
+    S    [S -> while C do S]
+      WHILE : while
+      C    [C -> E relop E]
+        E    [E -> T E']
+          T    [T -> F T']
+            F    [F -> ( E )]
+              SLP : (
+              E    [E -> T E']
+                T    [T -> F T']
+                  F    [F -> id]
+                    IDN : a3
+                  T'    [T' -> ε]
+                    ε
+                E'    [E' -> + T E']
+                  ADD : +
+                  T    [T -> F T']
+                    F    [F -> int10]
+                      DEC : 15
+                    T'    [T' -> ε]
+                      ε
+                E'    [E' -> ε]
+                  ε
+              SRP : )
+            T'    [T' -> ε]
+              ε
+          E'    [E' -> ε]
+            ε
+        relop    [relop -> >]
+          GT : >
+        E    [E -> T E']
+          T    [T -> F T']
+            F    [F -> int16]
+              HEX : 10
+            T'    [T' -> ε]
+              ε
+          E'    [E' -> ε]
+            ε
+      DO : do
+      S    [S -> if C then S S']
+        IF : if
+        C    [C -> E relop E]
+          E    [E -> T E']
+            T    [T -> F T']
+              F    [F -> id]
+                IDN : x2
+              T'    [T' -> ε]
+                ε
+            E'    [E' -> ε]
+              ε
+          relop    [relop -> =]
+            EQ : =
+          E    [E -> T E']
+            T    [T -> F T']
+              F    [F -> int8]
+                OCT : 7
+              T'    [T' -> ε]
+                ε
+            E'    [E' -> ε]
+              ε
+        THEN : then
+        S    [S -> while C do S]
+          WHILE : while
+          C    [C -> E relop E]
+            E    [E -> T E']
+              T    [T -> F T']
+                F    [F -> id]
+                  IDN : y
+                T'    [T' -> ε]
+                  ε
+              E'    [E' -> ε]
+                ε
+            relop    [relop -> <]
+              LT : <
+            E    [E -> T E']
+              T    [T -> F T']
+                F    [F -> id]
+                  IDN : z
+                T'    [T' -> ε]
+                  ε
+              E'    [E' -> ε]
+                ε
+          DO : do
+          S    [S -> id = E]
+            IDN : y
+            EQ : =
+            E    [E -> T E']
+              T    [T -> F T']
+                F    [F -> id]
+                  IDN : x
+                T'    [T' -> * F T']
+                  MUL : *
+                  F    [F -> id]
+                    IDN : y
+                T'    [T' -> / F T']
+                  DIV : /
+                  F    [F -> id]
+                    IDN : z
+                T'    [T' -> ε]
+                  ε
+              E'    [E' -> ε]
+                ε
+        S'    [S' -> ε]
+          ε
+    SEMI : ;
+  L    [L -> S ;]
+    S    [S -> id = E]
+      IDN : c
+      EQ : =
+      E    [E -> T E']
+        T    [T -> F T']
+          F    [F -> id]
+            IDN : b
+          T'    [T' -> * F T']
+            MUL : *
+            F    [F -> id]
+              IDN : c
+          T'    [T' -> ε]
+            ε
+        E'    [E' -> + T E']
+          ADD : +
+          T    [T -> F T']
+            F    [F -> id]
+              IDN : d
+            T'    [T' -> ε]
+              ε
+        E'    [E' -> ε]
+          ε
+    SEMI : ;
+语法分析成功！

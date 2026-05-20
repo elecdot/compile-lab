@@ -17,15 +17,21 @@ trap 'rm -rf "$TMP_DIR"' EXIT HUP INT TERM
 
 run_case() {
   case_name=$1
-  main_class=$2
+  shift
   input_file="$ROOT_DIR/tests/$case_name.in"
   expected_file="$ROOT_DIR/tests/$case_name.expected"
   actual_file="$TMP_DIR/$case_name.actual"
 
-  "$JAVA" $JAVA_FLAGS -cp "$BUILD_DIR" "$main_class" < "$input_file" > "$actual_file"
+  "$JAVA" $JAVA_FLAGS -cp "$BUILD_DIR" "$@" < "$input_file" > "$actual_file"
   diff -u "$expected_file" "$actual_file"
   printf 'ok %s\n' "$case_name"
 }
 
 run_case lab1_sample Main
-run_case lab23_sample Experiment2
+run_case lab2_tree_sample Experiment2 --tree
+
+if [ "${RUN_LAB3_TAC:-0}" = "1" ]; then
+  run_case lab3_tac_sample Experiment2 --tac
+else
+  printf '%s\n' 'skip lab3_tac_sample (implementation is not material-aligned yet)'
+fi

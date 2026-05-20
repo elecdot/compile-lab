@@ -11,12 +11,17 @@ Directory entry point for project test cases and expected outputs.
 
 ## Local Conventions
 
-- Run the characterization suite through `make test`.
+- Run the stable characterization suite through `make test`.
+- The lab 3 TAC material sample is tracked as an expected target, but is not
+  part of the default suite until the implementation is aligned with the lab
+  handout. Run it explicitly with `RUN_LAB3_TAC=1 make test`.
 - Keep test fixtures small and focused.
 - Use `<area>_<case>.in` for input fixtures and `<area>_<case>.expected` for
   expected output.
-- Use stable area names such as `lab1`, `lab23`, `lexer`, `parser`, `tac`, and
-  `e2e`.
+- Use stable area names such as `lab1`, `lab2_tree`, `lab3_tac`, `lexer`,
+  `parser`, `tac`, and `e2e`.
+- Prefer `lab2_tree` for syntax-tree fixtures and `lab3_tac` for
+  three-address-code fixtures when the same source program is used across labs.
 - Keep `<case>` lowercase, descriptive, and separated with underscores.
 - Prefer plain text fixtures that can be reviewed in diffs.
 - Keep illustrative samples in `examples/`; keep automated assertions here.

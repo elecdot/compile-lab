@@ -12,7 +12,9 @@ Directory entry point for implementation source code.
 ## Entry Points
 
 - `Main.java`: imported lab 1 lexer entry point.
-- `Experiment2.java`: imported lab 2 parser entry point with its own lexer.
+- `Experiment2.java`: imported lab 2 parser and lab 3 code-generation entry
+  point with its own lexer. Use `--tree` for syntax-tree output and `--tac`
+  for three-address-code output.
 
 ## Local Conventions
 

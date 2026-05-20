@@ -33,10 +33,12 @@ README files define the local purpose and conventions for that subtree.
 
 - Repository structure and directory-level README files are initialized.
 - Imported Java implementations for lab 1 and lab 2 are present under `src/`.
-- Characterization fixtures cover the imported lab 1 and lab 2 sample behavior.
+- Characterization fixtures cover lab 1 lexer behavior, lab 2 syntax-tree
+  output, and the material-expected lab 3 three-address-code sample.
 
 ## Open Loops
 
 - [ ] Confirm implementation language and command-line interface.
+- [ ] Align lab 3 three-address-code generation with the material sample.
 - [ ] Refactor imported Java sources behind stable tests.
 - [ ] Add detailed design notes under `docs/`.
