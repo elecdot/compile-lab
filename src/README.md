@@ -8,6 +8,7 @@ Directory entry point for implementation source code.
 - Parser implementation.
 - Code generation implementation.
 - Program entry point.
+- Shared model types used by compiler subsystems.
 
 ## Entry Points
 
@@ -15,6 +16,9 @@ Directory entry point for implementation source code.
 - `Experiment2.java`: imported lab 2 parser and lab 3 code-generation entry
   point with its own lexer. Use `--tree` for syntax-tree output and `--tac`
   for three-address-code output.
+- `Token.java`: token model used by the lab 2/lab 3 pipeline.
+- `ExprAttr.java`: expression attribute model used during TAC generation.
+- `CodeGenerator.java`: label, temporary, and formatted TAC output helper.
 
 ## Local Conventions
 

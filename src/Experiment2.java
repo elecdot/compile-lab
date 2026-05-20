@@ -4,24 +4,6 @@ import java.util.*;
 public class Experiment2 {
 
     /**
-     * Token 类
-     */
-    static class Token {
-        String type;
-        String value;
-
-        Token(String type, String value) {
-            this.type = type;
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return type + "  " + value;
-        }
-    }
-
-    /**
      * 实验一：词法分析器
      */
     static class Lexer {
@@ -225,101 +207,6 @@ public class Experiment2 {
                 int value = Integer.parseInt(octString, 8);
                 return new Token("OCT", String.valueOf(value));
             }
-        }
-    }
-
-    /**
-     * 实验三：代码生成器
-     */
-    static class CodeGenerator {
-        private int tempCount = 1;
-        private int labelCount = 1;
-        private boolean usedProgramNextLabel = false;
-        private final List<String> codes = new ArrayList<>();
-        private final Set<String> referencedLabels = new HashSet<>();
-
-        public String newTemp() {
-            return "t" + tempCount++;
-        }
-
-        public String newLabel() {
-            return "L" + labelCount++;
-        }
-
-        public String newProgramNextLabel() {
-            if (!usedProgramNextLabel) {
-                usedProgramNextLabel = true;
-                return "L0";
-            }
-
-            return newLabel();
-        }
-
-        public int emit(String code) {
-            codes.add(code);
-            return codes.size() - 1;
-        }
-
-        public void emitLabel(String label) {
-            codes.add(label + ":");
-        }
-
-        public int emitGoto(String label) {
-            referencedLabels.add(label);
-            return emit("goto " + label);
-        }
-
-        public void markLabelReferenced(String label) {
-            referencedLabels.add(label);
-        }
-
-        public void patchGoto(int index, String label) {
-            referencedLabels.add(label);
-            codes.set(index, "goto " + label);
-        }
-
-        public boolean isLabelReferenced(String label) {
-            return referencedLabels.contains(label);
-        }
-
-        public List<String> getCodes() {
-            List<String> formatted = new ArrayList<>();
-
-            for (int i = 0; i < codes.size(); i++) {
-                String code = codes.get(i);
-
-                if (code.endsWith(":") && i + 1 < codes.size() && !codes.get(i + 1).endsWith(":")) {
-                    formatted.add(code + " " + codes.get(i + 1));
-                    i++;
-                } else {
-                    formatted.add(code);
-                }
-            }
-
-            return formatted;
-        }
-
-        public void printCodes() {
-            for (String code : codes) {
-                System.out.println(code);
-            }
-        }
-    }
-
-    /**
-     * 表达式属性
-     *
-     * place 表示当前表达式的结果位置。
-     *
-     * 例如：
-     * b * c 生成 t1 = b * c
-     * 那么 b * c 的 place 就是 t1。
-     */
-    static class ExprAttr {
-        String place;
-
-        ExprAttr(String place) {
-            this.place = place;
         }
     }
 
