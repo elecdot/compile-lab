@@ -1,0 +1,4 @@
+if then else while do begin end
++ - * / > < = >= <= <> ( ) ;
+0 00 07 09 0x1f 0XABC 0x1g 0x 0abc
+data _x a_1 1f

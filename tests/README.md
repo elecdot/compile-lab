@@ -12,6 +12,8 @@ Directory entry point for project test cases and expected outputs.
 ## Local Conventions
 
 - Run the characterization suite through `make test`.
+- Keep lexer contract fixtures broad enough to protect every lab entry point
+  that uses the shared scanner.
 - Keep test fixtures small and focused.
 - Use `<area>_<case>.in` for input fixtures and `<area>_<case>.expected` for
   expected output.
