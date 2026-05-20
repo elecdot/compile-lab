@@ -42,3 +42,6 @@ compile_commands.json
 .env
 .env.*
 *.local
+
+# Aider local files
+.aider*
