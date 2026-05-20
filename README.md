@@ -50,12 +50,13 @@ README files define the local purpose and conventions for that subtree.
   implementation used by lab 2 and lab 3.
 - `Lexer.java` and `Token.java` are shared across lab 1, lab 2, and lab 3.
 - The default `make test` suite covers the lab 1 sample, shared lexer contract,
-  lab 2 syntax-tree sample, and lab 3 TAC sample.
+  lab 2 syntax-tree output and invalid-octal error handling, plus lab 3 TAC
+  samples for material output, expression precedence, and nested control flow.
 
 ## Open Loops
 
-- [ ] Add focused parser and TAC fixtures for invalid input, nested control
-  flow, and expression precedence.
-- [ ] Separate TAC generation policy from parser traversal after fixture
-  coverage is stronger.
+- [ ] Separate TAC generation policy from parser traversal behind the expanded
+  fixture suite.
+- [ ] Add focused parser fixtures for additional syntax errors before changing
+  grammar acceptance or diagnostics.
 - [ ] Keep `docs/` aligned with the source as the lab report takes shape.

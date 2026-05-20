@@ -49,6 +49,12 @@ and the active token when available.
 ## Test Coverage
 
 - `tests/lab2_tree_sample.*` protects the lab 2 syntax-tree output.
+- `tests/lab2_tree_invalid_octal.*` protects parser diagnostics for invalid
+  numeric input in syntax-tree mode.
 - `tests/lab3_tac_sample.*` protects the parser path used by lab 3 TAC output.
+- `tests/lab3_tac_precedence.*` protects expression precedence and
+  parenthesized expression parsing through TAC output.
+- `tests/lab3_tac_nested_control.*` protects nested `while` and `if/else`
+  parsing through TAC output.
 - Add focused fixtures before changing grammar acceptance, error messages, or
   tree formatting.

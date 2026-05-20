@@ -22,5 +22,8 @@ implementation and tests.
   matching the lab handout sample style.
 - The first program-level continuation label is `L0`; ordinary generated
   labels start at `L1`.
-- The material sample is tracked by `tests/lab3_tac_sample.*` and runs in the
-  default `make test` suite.
+- The material sample is tracked by `tests/lab3_tac_sample.*`.
+- Expression precedence is tracked by `tests/lab3_tac_precedence.*`.
+- Nested `while` and `if/else` control flow is tracked by
+  `tests/lab3_tac_nested_control.*`.
+- These fixtures run in the default `make test` suite.

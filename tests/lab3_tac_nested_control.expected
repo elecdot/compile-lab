@@ -1,0 +1,11 @@
+L1: if a < b goto L2
+goto L0
+L2: if c < d goto L3
+goto L4
+L3: t1 := x + 1
+x = t1
+goto L1
+L4: t2 := x - 1
+x = t2
+goto L1
+L0:

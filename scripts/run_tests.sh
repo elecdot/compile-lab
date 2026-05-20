@@ -30,4 +30,7 @@ run_case() {
 run_case lab1_sample Main
 run_case lexer_contract Main
 run_case lab2_tree_sample Experiment2 --tree
+run_case lab2_tree_invalid_octal Experiment2 --tree
 run_case lab3_tac_sample Experiment2 --tac
+run_case lab3_tac_precedence Experiment2 --tac
+run_case lab3_tac_nested_control Experiment2 --tac

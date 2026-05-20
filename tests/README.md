@@ -14,7 +14,13 @@ Directory entry point for project test cases and expected outputs.
 - `lab1_sample.*`: lab 1 token output sample.
 - `lexer_contract.*`: shared scanner behavior used by all lab entries.
 - `lab2_tree_sample.*`: syntax-tree output for `Experiment2 --tree`.
+- `lab2_tree_invalid_octal.*`: parser error output for an invalid octal
+  literal in syntax-tree mode.
 - `lab3_tac_sample.*`: three-address-code output for `Experiment2 --tac`.
+- `lab3_tac_precedence.*`: TAC output for expression precedence and
+  parenthesized expressions.
+- `lab3_tac_nested_control.*`: TAC output for nested `while` and `if/else`
+  control flow.
 
 ## Local Conventions
 
