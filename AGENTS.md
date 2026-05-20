@@ -3,7 +3,7 @@
 Read `README.md` and relevant directory-level `README.md` files first
 for the project overview and local conventions.
 
-Align implementation with the compiler-principles labt guidelines and requirements found in the `material/` directory.
+Align implementation with the compiler-principles lab guidelines and requirements found in the `material/` directory.
 
 ## Working Notes
 
