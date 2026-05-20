@@ -800,18 +800,8 @@ public class Experiment2 {
         return codeGen.getCodes();
     }
 
-    /**
-     * main：默认作为实验三运行，输出三地址代码
-     *
-     * 如果你想看实验二语法树，可以把：
-     * List<String> codes = generateCodeForExperiment3(source.toString());
-     *
-     * 换成：
-     * parseAndPrintTree(source.toString());
-     */
-    public static void main(String[] args) throws IOException {
+    private static String readSource() throws IOException {
         StringBuilder source = new StringBuilder();
-
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String line;
 
@@ -819,11 +809,25 @@ public class Experiment2 {
             source.append(line).append('\n');
         }
 
-        try {
-            List<String> codes = generateCodeForExperiment3(source.toString());
+        return source.toString();
+    }
 
-            for (String code : codes) {
-                System.out.println(code);
+    public static void main(String[] args) throws IOException {
+        String source = readSource();
+
+        try {
+            String mode = args.length == 0 ? "--tac" : args[0];
+
+            if (mode.equals("--tree")) {
+                parseAndPrintTree(source);
+            } else if (mode.equals("--tac")) {
+                List<String> codes = generateCodeForExperiment3(source);
+
+                for (String code : codes) {
+                    System.out.println(code);
+                }
+            } else {
+                throw new RuntimeException("未知运行模式：" + mode);
             }
 
         } catch (RuntimeException e) {
