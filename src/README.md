@@ -4,10 +4,10 @@ Directory entry point for implementation source code.
 
 ## Scope
 
-- Lexer implementation.
-- Parser implementation.
-- Code generation implementation.
-- Program entry point.
+- Shared lexer and token model.
+- Lab command entry points.
+- Recursive-descent parser implementation.
+- Three-address-code generation helpers.
 - Shared model types used by compiler subsystems.
 
 ## Entry Points
@@ -25,6 +25,10 @@ Directory entry point for implementation source code.
 
 - Keep source files organized by compiler subsystem.
 - Prefer clear module boundaries over large catch-all files.
+- Treat `Lexer` and `Token` as shared interfaces across lab entries; update
+  shared lexer fixtures before changing their behavior.
+- Preserve lab entry behavior with tests before extracting more code from
+  `Experiment2.java`.
 - Keep public interfaces documented close to their declarations.
 - Do not add generated sources here unless the generation step is part of the
   documented build.

@@ -1,6 +1,6 @@
 # Three-Address Code
 
-Purpose: document the lab 3 three-address-code conventions used by the current
+Purpose: document the lab 3 three-address-code conventions used by the
 implementation and tests.
 
 ## Material Rules

@@ -4,10 +4,17 @@ Directory entry point for project test cases and expected outputs.
 
 ## Scope
 
-- Lexer tests.
-- Parser tests.
-- Three-address-code tests.
-- End-to-end examples.
+- Lab 1 lexer-output fixtures.
+- Shared lexer contract fixtures.
+- Lab 2 syntax-tree fixtures.
+- Lab 3 three-address-code fixtures.
+
+## Fixtures
+
+- `lab1_sample.*`: lab 1 token output sample.
+- `lexer_contract.*`: shared scanner behavior used by all lab entries.
+- `lab2_tree_sample.*`: syntax-tree output for `Experiment2 --tree`.
+- `lab3_tac_sample.*`: three-address-code output for `Experiment2 --tac`.
 
 ## Local Conventions
 

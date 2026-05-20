@@ -7,19 +7,22 @@ and final lab report.
 
 ## Documents
 
-- Lab notes.
-- Report notes.
-- Design notes.
-- [Three-address code notes](tac.md).
+- [Lexer notes](lexer.md): shared scanner contract and lab 1 output rules.
+- [Parser notes](parser.md): grammar scope, parser entry points, and syntax
+  tree behavior.
+- [Three-address code notes](tac.md): lab 3 translation and output
+  conventions.
 
 ## Plan
 
-- `lexer.md`: lexical rules, token kinds, invalid-number handling, and scanner
-  behavior.
-- `parser.md`: grammar choices, grammar rewrites, parser structure, and error
-  handling notes.
-- `tac.md`: syntax-directed translation notes, temporary and label strategy,
-  and three-address-code output conventions.
+- Keep `lexer.md` as the stable reference for token shape, lab 1 attributes,
+  and scanner compatibility across lab entries.
+- Keep `parser.md` as the stable reference for grammar coverage and the lab 2
+  syntax-tree mode.
+- Keep `tac.md` as the stable reference for lab 3 translation rules, labels,
+  temporaries, and expected output style.
+- Add report-facing notes here only after the implementation contract is
+  reflected in tests.
 
 ## Local Conventions
 

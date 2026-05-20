@@ -6,9 +6,14 @@ Use this directory for repeatable project workflows.
 
 ## Scope
 
-- Build helpers.
-- Test runners.
+- Build helpers used by `Makefile` targets.
+- Test runners used by `Makefile` targets.
 - Submission packaging helpers.
+
+## Files
+
+- `run_tests.sh`: executes the checked fixture suite after `make build` has
+  produced `build/classes`.
 
 ## Local Conventions
 

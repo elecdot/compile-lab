@@ -5,6 +5,9 @@ Repository for compiler-principles lab work.
 ## Documentation
 
 - [docs/README.md](docs/README.md)
+- [docs/lexer.md](docs/lexer.md)
+- [docs/parser.md](docs/parser.md)
+- [docs/tac.md](docs/tac.md)
 - [material/README.md](material/README.md)
 
 ## Layout
@@ -27,17 +30,30 @@ README files define the local purpose and conventions for that subtree.
 - Put directory-specific rules in that directory's README.
 - Use `Makefile` as the project command entry point for build, test, run, and
   cleanup workflows.
+- Prefer `make build`, `make test`, and `make clean` over direct compiler or
+  script commands when documenting workflows.
 - Keep generated files out of Git unless they are required deliverables.
+
+## Commands
+
+- `make build`: compile all Java sources into `build/classes`.
+- `make test`: build and run the checked fixture suite.
+- `make clean`: remove generated build artifacts.
 
 ## Current State
 
-- Repository structure and directory-level README files are initialized.
-- Imported Java implementations for lab 1 and lab 2 are present under `src/`.
-- Characterization fixtures cover lab 1 lexer behavior, lab 2 syntax-tree
-  output, and the material-expected lab 3 three-address-code sample.
+- Java is the implementation language for the current lab entries.
+- `Main.java` is the lab 1 lexer-output entry point.
+- `Experiment2.java` is the lab 2 and lab 3 entry point: `--tree` emits the
+  syntax tree, and `--tac` emits three-address code.
+- `Lexer.java` and `Token.java` are shared across lab 1, lab 2, and lab 3.
+- The default `make test` suite covers the lab 1 sample, shared lexer contract,
+  lab 2 syntax-tree sample, and lab 3 TAC sample.
 
 ## Open Loops
 
-- [ ] Confirm implementation language and command-line interface.
-- [ ] Refactor imported Java sources behind stable tests.
-- [ ] Add detailed design notes under `docs/`.
+- [ ] Continue reducing `Experiment2.java` into smaller parser and lab-entry
+  modules behind the existing fixtures.
+- [ ] Expand fixtures for invalid input, nested control flow, and expression
+  precedence before changing parser behavior.
+- [ ] Keep `docs/` aligned with the source as the lab report takes shape.
