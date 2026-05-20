@@ -12,12 +12,12 @@ Directory entry point for implementation source code.
 
 ## Entry Points
 
-- `Main.java`: imported lab 1 lexer entry point.
+- `Main.java`: lab 1 lexer output entry point using the shared lexer.
 - `Experiment2.java`: imported lab 2 parser and lab 3 code-generation entry
-  point with its own lexer. Use `--tree` for syntax-tree output and `--tac`
-  for three-address-code output.
-- `Lexer.java`: lexer used by the lab 2/lab 3 pipeline.
-- `Token.java`: token model used by the lab 2/lab 3 pipeline.
+  point. Use `--tree` for syntax-tree output and `--tac` for
+  three-address-code output.
+- `Lexer.java`: shared lexer used by lab 1, lab 2, and lab 3 entry points.
+- `Token.java`: shared token model with lab-specific output helpers.
 - `ExprAttr.java`: expression attribute model used during TAC generation.
 - `CodeGenerator.java`: label, temporary, and formatted TAC output helper.
 
