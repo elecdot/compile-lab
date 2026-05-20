@@ -8,11 +8,15 @@ three-address-code generation.
 - `Experiment2 --tree` parses stdin and prints the lab 2 syntax tree.
 - `Experiment2 --tac` parses stdin and prints lab 3 three-address code.
 - `Experiment2` without arguments defaults to `--tac`.
+- `Parsers.forTree(...)` constructs the parser mode used by lab 2.
+- `Parsers.forTac(...)` constructs the parser mode used by lab 3.
 
 ## Grammar Scope
 
-The parser is a recursive-descent parser for the lab statement and expression
-subset.
+`Parser.java` contains the `Parser` interface and the recursive-descent parser
+implementation for the lab statement and expression subset. `Experiment2.java`
+owns stdin/stdout mode selection and does not depend on parser implementation
+flags directly.
 
 - Program: `P -> L+`.
 - Statement line: `L -> S ;`.

@@ -46,14 +46,16 @@ README files define the local purpose and conventions for that subtree.
 - `Main.java` is the lab 1 lexer-output entry point.
 - `Experiment2.java` is the lab 2 and lab 3 entry point: `--tree` emits the
   syntax tree, and `--tac` emits three-address code.
+- `Parser.java` contains the parser interface and recursive-descent
+  implementation used by lab 2 and lab 3.
 - `Lexer.java` and `Token.java` are shared across lab 1, lab 2, and lab 3.
 - The default `make test` suite covers the lab 1 sample, shared lexer contract,
   lab 2 syntax-tree sample, and lab 3 TAC sample.
 
 ## Open Loops
 
-- [ ] Continue reducing `Experiment2.java` into smaller parser and lab-entry
-  modules behind the existing fixtures.
-- [ ] Expand fixtures for invalid input, nested control flow, and expression
-  precedence before changing parser behavior.
+- [ ] Add focused parser and TAC fixtures for invalid input, nested control
+  flow, and expression precedence.
+- [ ] Separate TAC generation policy from parser traversal after fixture
+  coverage is stronger.
 - [ ] Keep `docs/` aligned with the source as the lab report takes shape.
