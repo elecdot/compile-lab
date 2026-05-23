@@ -6,6 +6,8 @@ final class Lexer {
     private final String input;
     private int pos = 0;
     private final int length;
+    private int line = 1;
+    private int column = 1;
 
     private static final Set<String> keywords = new HashSet<>(Arrays.asList(
             "if", "then", "else", "while", "do", "begin", "end"
@@ -23,32 +25,34 @@ final class Lexer {
             return null;
         }
 
+        int tokenLine = line;
+        int tokenCol = column;
         char c = input.charAt(pos);
 
         if (c == '>') {
             if (peekNext('=')) {
-                pos += 2;
-                return new Token("GE", ">=", ">=");
+                advancePos(2);
+                return new Token("GE", ">=", ">=", tokenLine, tokenCol);
             }
-            pos++;
-            return new Token("GT", ">", ">");
+            advancePos(1);
+            return new Token("GT", ">", ">", tokenLine, tokenCol);
         }
 
         if (c == '<') {
             if (peekNext('=')) {
-                pos += 2;
-                return new Token("LE", "<=", "<=");
+                advancePos(2);
+                return new Token("LE", "<=", "<=", tokenLine, tokenCol);
             } else if (peekNext('>')) {
-                pos += 2;
-                return new Token("NEQ", "<>", "<>");
+                advancePos(2);
+                return new Token("NEQ", "<>", "<>", tokenLine, tokenCol);
             }
-            pos++;
-            return new Token("LT", "<", "<");
+            advancePos(1);
+            return new Token("LT", "<", "<", tokenLine, tokenCol);
         }
 
-        Token single = singleCharacterToken(c);
+        Token single = singleCharacterToken(c, tokenLine, tokenCol);
         if (single != null) {
-            pos++;
+            advancePos(1);
             return single;
         }
 
@@ -58,65 +62,65 @@ final class Lexer {
             if (isWhitespace(t) || isOperatorOrDelimiterStart(t)) {
                 break;
             }
-            pos++;
+            advancePos(1);
         }
 
         String lexeme = input.substring(start, pos);
-        return classifyLexeme(lexeme);
+        return classifyLexeme(lexeme, tokenLine, tokenCol);
     }
 
-    private Token singleCharacterToken(char c) {
+    private Token singleCharacterToken(char c, int tokenLine, int tokenCol) {
         switch (c) {
             case '+':
-                return new Token("ADD", "+", "+");
+                return new Token("ADD", "+", "+", tokenLine, tokenCol);
             case '-':
-                return new Token("SUB", "-", "-");
+                return new Token("SUB", "-", "-", tokenLine, tokenCol);
             case '*':
-                return new Token("MUL", "*", "*");
+                return new Token("MUL", "*", "*", tokenLine, tokenCol);
             case '/':
-                return new Token("DIV", "/", "/");
+                return new Token("DIV", "/", "/", tokenLine, tokenCol);
             case '=':
-                return new Token("EQ", "=", "=");
+                return new Token("EQ", "=", "=", tokenLine, tokenCol);
             case '(':
-                return new Token("SLP", "(", "(");
+                return new Token("SLP", "(", "(", tokenLine, tokenCol);
             case ')':
-                return new Token("SRP", ")", ")");
+                return new Token("SRP", ")", ")", tokenLine, tokenCol);
             case ';':
-                return new Token("SEMI", ";", ";");
+                return new Token("SEMI", ";", ";", tokenLine, tokenCol);
             default:
                 return null;
         }
     }
 
-    private Token classifyLexeme(String lexeme) {
+    private Token classifyLexeme(String lexeme, int tokenLine, int tokenCol) {
         if (lexeme == null || lexeme.length() == 0) {
             return null;
         }
 
         String keyword = keywordType(lexeme);
         if (keyword != null) {
-            return new Token(keyword, lexeme, lexeme);
+            return new Token(keyword, lexeme, lexeme, tokenLine, tokenCol);
         }
 
         if (isIdentifier(lexeme)) {
-            return new Token("IDN", lexeme, lexeme);
+            return new Token("IDN", lexeme, lexeme, tokenLine, tokenCol);
         }
 
         if (isDigit(lexeme.charAt(0))) {
-            return classifyNumber(lexeme);
+            return classifyNumber(lexeme, tokenLine, tokenCol);
         }
 
-        return new Token("UNKNOWN", lexeme, lexeme);
+        return new Token("UNKNOWN", lexeme, lexeme, tokenLine, tokenCol);
     }
 
-    private Token classifyNumber(String lexeme) {
+    private Token classifyNumber(String lexeme, int tokenLine, int tokenCol) {
         if (lexeme.equals("0")) {
-            return new Token("DEC", "0", lexeme);
+            return new Token("DEC", "0", lexeme, tokenLine, tokenCol);
         }
 
         if (lexeme.length() >= 2 && lexeme.charAt(0) == '0' && (lexeme.charAt(1) == 'x' || lexeme.charAt(1) == 'X')) {
             if (lexeme.length() == 2) {
-                return new Token("ILHEX", "-", lexeme);
+                return new Token("ILHEX", "-", lexeme, tokenLine, tokenCol);
             }
 
             boolean allHex = true;
@@ -132,11 +136,11 @@ final class Lexer {
             }
 
             if (allHex) {
-                return new Token("HEX", convertBaseToDecimal(lexeme.substring(2), 16), lexeme);
+                return new Token("HEX", convertBaseToDecimal(lexeme.substring(2), 16), lexeme, tokenLine, tokenCol);
             }
 
             if (hasIllegal) {
-                return new Token("ILHEX", "-", lexeme);
+                return new Token("ILHEX", "-", lexeme, tokenLine, tokenCol);
             }
         }
 
@@ -162,26 +166,42 @@ final class Lexer {
             }
 
             if (allDigits && has89) {
-                return new Token("ILOCT", "-", lexeme);
+                return new Token("ILOCT", "-", lexeme, tokenLine, tokenCol);
             }
 
             if (allDigits && allOct) {
-                return new Token("OCT", convertBaseToDecimal(lexeme.substring(1), 8), lexeme);
+                return new Token("OCT", convertBaseToDecimal(lexeme.substring(1), 8), lexeme, tokenLine, tokenCol);
             }
 
-            return new Token("ILNUM", "-", lexeme);
+            return new Token("ILNUM", "-", lexeme, tokenLine, tokenCol);
         }
 
         if (isDecimal(lexeme)) {
-            return new Token("DEC", lexeme, lexeme);
+            return new Token("DEC", lexeme, lexeme, tokenLine, tokenCol);
         }
 
-        return new Token("ILNUM", "-", lexeme);
+        return new Token("ILNUM", "-", lexeme, tokenLine, tokenCol);
+    }
+
+    /**
+     * 统一推进 pos 并维护行列号。
+     * 所有位置变更都走这个方法，确保 line/column 始终准确。
+     */
+    private void advancePos(int n) {
+        for (int i = 0; i < n; i++) {
+            if (pos < length && input.charAt(pos) == '\n') {
+                line++;
+                column = 1;
+            } else {
+                column++;
+            }
+            pos++;
+        }
     }
 
     private void skipWhitespace() {
         while (pos < length && isWhitespace(input.charAt(pos))) {
-            pos++;
+            advancePos(1);
         }
     }
 
