@@ -1,4 +1,4 @@
-# 编译原理实验报告（精简整合版）
+# 编译原理实验报告
 
 ## 0. 实验目的
 
@@ -28,19 +28,7 @@
 | 基本错误处理 | 错误定位、语句级恢复截图 | 错误恢复 fixture |
 | 指导书样例正确运行 | 自动化测试通过截图 | `make test` |
 
-最近一次自动化验证：
-
-```text
-make test
-20 个 fixture 全部通过
-```
-
-课堂汇报建议截图：
-
-- 词法分析指导书样例运行结果；
-- `Experiment2 --tree` 的语法树输出；
-- `Experiment2 --tac` 的三地址代码输出；
-- `make test` 全部通过结果。
+![自动化测试通过](media/build-test-pass.png){ width=5.8in }
 
 ## 3. 词法分析子系统
 
@@ -48,13 +36,13 @@ make test
 
 指导书样例运行结果如下：
 
-<img src="lab1-from-teammate/media/image1.png" style="width:3.1in" />
+![词法分析指导书样例运行结果](lab1-from-teammate/media/image1.png){ width=3.1in }
 
 组员还实现并验证了输入缓冲区行为：用户在按下 Enter 前对当前输入行的修改会影响最终输入；按下 Enter 后再修改不会改变已经提交给编译器的源程序。
 
-<img src="lab1-from-teammate/media/image2.png" style="width:1.4in" />
+![输入缓冲修改前验证](lab1-from-teammate/media/image2.png){ width=1.4in }
 
-<img src="lab1-from-teammate/media/image3.png" style="width:1.2in" />
+![输入缓冲提交后验证](lab1-from-teammate/media/image3.png){ width=1.2in }
 
 ### 3.1 正规式描述
 
@@ -100,7 +88,7 @@ H -> hex_digit H | hex_digit
 
 状态图素材来自组员词法分析报告。原报告中的综合状态图如下：
 
-<img src="lab1-from-teammate/media/image4.png" style="width:4.4in" />
+![词法综合状态图](lab1-from-teammate/media/image4.png){ width=4.4in }
 
 最终 Word/PPT 中也可按需拆分引用以下内容：
 
@@ -166,63 +154,63 @@ F  -> ( E ) | id | int8 | int10 | int16
 
 S 的语法图：
 
-<img src="lab2-from-teammate/media/image1.png" style="width:4.2in" />
+![S 的语法图](lab2-from-teammate/media/image1.png){ width=4.2in }
 
 S' 的语法图：
 
-<img src="lab2-from-teammate/media/image2.png" style="width:2.4in" />
+![S' 的语法图](lab2-from-teammate/media/image2.png){ width=2.4in }
 
 C 的语法图：
 
-<img src="lab2-from-teammate/media/image3.png" style="width:4.3in" />
+![C 的语法图](lab2-from-teammate/media/image3.png){ width=4.3in }
 
 E 的语法图：
 
-<img src="lab2-from-teammate/media/image4.png" style="width:3.3in" />
+![E 的语法图](lab2-from-teammate/media/image4.png){ width=3.3in }
 
 E' 的语法图：
 
-<img src="lab2-from-teammate/media/image5.png" style="width:3.8in" />
+![E' 的语法图](lab2-from-teammate/media/image5.png){ width=3.8in }
 
 T 的语法图：
 
-<img src="lab2-from-teammate/media/image6.png" style="width:3.2in" />
+![T 的语法图](lab2-from-teammate/media/image6.png){ width=3.2in }
 
 T' 的语法图：
 
-<img src="lab2-from-teammate/media/image7.png" style="width:4.3in" />
+![T' 的语法图](lab2-from-teammate/media/image7.png){ width=4.3in }
 
 F 的语法图：
 
-<img src="lab2-from-teammate/media/image8.png" style="width:4.0in" />
+![F 的语法图](lab2-from-teammate/media/image8.png){ width=4.0in }
 
 实验二扩展功能验证截图也保留在最终整合报告中，便于证明组员完成的扩展内容：
 
 六种关系运算符验证：
 
-<img src="lab2-from-teammate/media/image9.png" style="width:4.9in" />
+![六种关系运算符验证](lab2-from-teammate/media/image9.png){ width=4.9in }
 
 复合语句验证：
 
-<img src="lab2-from-teammate/media/image10.png" style="width:5.8in" />
+![复合语句验证](lab2-from-teammate/media/image10.png){ width=5.8in }
 
 非法数值检测与定位：
 
-<img src="lab2-from-teammate/media/image11.png" style="width:5.8in" />
+![非法数值检测与定位](lab2-from-teammate/media/image11.png){ width=5.8in }
 
 续编译与错误处理测试：
 
-<img src="lab2-from-teammate/media/image12.png" style="width:5.8in" />
+![缺分号隐式纠错验证](lab2-from-teammate/media/image12.png){ width=5.8in }
 
-<img src="lab2-from-teammate/media/image13.png" style="width:5.8in" />
+![缺表达式续编译验证](lab2-from-teammate/media/image13.png){ width=5.8in }
 
-<img src="lab2-from-teammate/media/image14.png" style="width:5.8in" />
+![非法整数错误定位验证](lab2-from-teammate/media/image14.png){ width=5.8in }
 
-<img src="lab2-from-teammate/media/image15.png" style="width:5.8in" />
+![混合错误续编译验证](lab2-from-teammate/media/image15.png){ width=5.8in }
 
 综合关系符测试：
 
-<img src="lab2-from-teammate/media/image16.png" style="width:5.8in" />
+![综合关系符测试](lab2-from-teammate/media/image16.png){ width=5.8in }
 
 ### 4.2 Bison 语法分析
 
@@ -276,6 +264,12 @@ factor         -> id | int8 | int10 | int16
 ```
 
 `if-then-else` 的 dangling else 问题通过 `%nonassoc THEN`、`%nonassoc ELSE` 与 `%prec THEN` 处理，使 `else` 绑定到最近的未匹配 `if`。
+
+Bison 路径还提供 AST 文本展示和 DOT 图展示，便于观察语法分析后的中间结构：
+
+![Bison 路径 AST 文本展示](media/lab3-ast-output.png){ width=5.8in }
+
+![Bison 路径 AST DOT 图](media/lab3-ast-dot.png){ width=5.8in }
 
 ## 5. 三地址代码生成器
 
@@ -340,6 +334,10 @@ t2 = a + t1
 x = t2
 ```
 
+指导书样例的三地址代码输出如下：
+
+![指导书样例三地址代码输出](media/lab3-tac-sample.png){ width=5.8in }
+
 ## 6. 扩展内容与验证材料
 
 | 扩展内容 | 功能说明 | 验证材料 |
@@ -363,6 +361,18 @@ x = t2
 - `if` 缺 `then`；
 - 复合语句内部错误；
 - 连续多个错误语句。
+
+语句级错误恢复输出示例：
+
+![语句级错误恢复输出](media/lab3-error-recovery.png){ width=5.8in }
+
+常量折叠优化输出示例：
+
+![常量折叠优化输出](media/lab3-tac-opt.png){ width=5.8in }
+
+MiniSLR 自动机 DOT 渲染结果：
+
+![MiniSLR LR(0) 状态自动机](media/minislr-automaton.png){ width=5.8in }
 
 边界说明：当前错误恢复是语句级恢复，不做复杂自动纠错；MiniSLR 是固定表达式文法原理展示，不是通用 parser generator。
 
