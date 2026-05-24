@@ -9,20 +9,24 @@ three-address-code generation.
 - `Experiment2 --tac` parses stdin and prints lab 3 three-address code.
 - `Experiment2` without arguments defaults to `--tac`.
 - `Parsers.forTree(...)` constructs the parser mode used by lab 2.
-- `Parsers.forTac(...)` constructs the parser mode used by lab 3.
+- `Parsers.forTac(...)` constructs the Bison-generated parser mode used by
+  lab 3.
 
 ## Grammar Scope
 
 `Parser.java` contains the `Parser` interface and the recursive-descent parser
-implementation for the lab statement and expression subset. `Experiment2.java`
-owns stdin/stdout mode selection and does not depend on parser implementation
-flags directly.
+implementation used by lab 2 tree output. `src/TacBisonParser.y` contains the
+Bison grammar used to generate the lab 3 parser into
+`build/generated/src/TacBisonParser.java` during `make build`.
+`Experiment2.java` owns stdin/stdout mode selection and does not depend on
+parser implementation flags directly.
 
 - Program: `P -> L+`.
 - Statement line: `L -> S ;`.
 - Assignment: `S -> id = E`.
 - Conditional: `S -> if C then S S'`, with `S' -> else S | epsilon`.
 - Loop: `S -> while C do S`.
+- Compound statement: `S -> begin L_list end`.
 - Condition: `C -> E relop E`.
 - Expressions use the usual precedence split: `E`, `T`, and `F`.
 - Factors support identifiers, parenthesized expressions, and valid integer
@@ -45,6 +49,11 @@ because the shared lexer exposes those tokens.
 Parser errors throw `RuntimeException` internally and are printed by the
 `Experiment2` command-line entry point. The message includes the expected shape
 and the active token when available.
+
+Lab 3 syntax is recognized by the Bison-generated parser. The generated parser
+builds a small AST, and `TacEmitter` traverses that AST with the existing
+`CodeGenerator` so label, temporary, and formatting behavior stays aligned with
+the lab 3 fixtures.
 
 ## Test Coverage
 

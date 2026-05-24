@@ -17,7 +17,10 @@ implementation and tests.
 ## Local Conventions
 
 - `Experiment2 --tree` prints the lab 2 syntax tree.
-- `Experiment2 --tac` prints lab 3 three-address code.
+- `Experiment2 --tac` prints lab 3 three-address code through the parser
+  generated from `src/TacBisonParser.y`.
+- `make build` runs Bison and writes the generated parser to
+  `build/generated/src/TacBisonParser.java`.
 - Labels are printed inline with the following instruction when possible,
   matching the lab handout sample style.
 - The first program-level continuation label is `L0`; ordinary generated

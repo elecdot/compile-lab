@@ -36,9 +36,13 @@ README files define the local purpose and conventions for that subtree.
 
 ## Commands
 
-- `make build`: compile all Java sources into `build/classes`.
+- `make build`: generate the lab 3 parser with Bison, then compile all Java
+  sources into `build/classes`.
 - `make test`: build and run the checked fixture suite.
 - `make clean`: remove generated build artifacts.
+
+`make build` requires GNU Bison and a JDK on `PATH`; override them with
+`BISON=...` or `JAVAC=...` when needed.
 
 ## Current State
 
@@ -47,7 +51,9 @@ README files define the local purpose and conventions for that subtree.
 - `Experiment2.java` is the lab 2 and lab 3 entry point: `--tree` emits the
   syntax tree, and `--tac` emits three-address code.
 - `Parser.java` contains the parser interface and recursive-descent
-  implementation used by lab 2 and lab 3.
+  implementation used by lab 2 syntax-tree output.
+- `src/TacBisonParser.y` is the Bison grammar used to generate the lab 3 TAC
+  parser during `make build`.
 - `Lexer.java` and `Token.java` are shared across lab 1, lab 2, and lab 3.
 - The default `make test` suite covers the lab 1 sample, shared lexer contract,
   lab 2 syntax-tree output and invalid-octal error handling, plus lab 3 TAC

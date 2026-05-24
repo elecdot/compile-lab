@@ -1,8 +1,11 @@
 .DEFAULT_GOAL := help
 
 BUILD_DIR := build/classes
-JAVA_SOURCES := $(wildcard src/*.java)
+GENERATED_SRC_DIR := build/generated/src
+GENERATED_SOURCES := $(GENERATED_SRC_DIR)/TacBisonParser.java
+JAVA_SOURCES := $(wildcard src/*.java) $(GENERATED_SOURCES)
 JAVAC ?= javac
+BISON ?= bison
 
 .PHONY: help build test clean
 
@@ -13,6 +16,12 @@ help:
 	@printf '%s\n' '  clean  - remove generated artifacts'
 
 build: $(BUILD_DIR)/.stamp
+
+$(GENERATED_SRC_DIR):
+	@mkdir -p $@
+
+$(GENERATED_SRC_DIR)/TacBisonParser.java: src/TacBisonParser.y | $(GENERATED_SRC_DIR)
+	$(BISON) --warnings=conflicts-sr,conflicts-rr -o $@ $<
 
 $(BUILD_DIR)/.stamp: $(JAVA_SOURCES)
 	@mkdir -p $(BUILD_DIR)

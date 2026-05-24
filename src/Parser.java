@@ -17,7 +17,7 @@ final class Parsers {
     }
 
     static Parser forTac(Lexer lexer, CodeGenerator codeGen) {
-        return new RecursiveDescentParser(lexer, false, true, codeGen);
+        return new BisonTacParser(lexer, codeGen);
     }
 }
 
@@ -676,11 +676,17 @@ final class RecursiveDescentParser implements Parser {
             return new ExprAttr(place);
 
         } else if (check("ILOCT")) {
+            if (enableTreeOutput && !enableCodeGen) {
+                throw new RuntimeException("语法错误：非法八进制整数，当前单词为：ILOCT，属性值：-");
+            }
             error("非法八进制整数: " + lookahead.lexeme);
             lookahead = lexer.nextToken();
             return new ExprAttr("0");
 
         } else if (check("ILHEX")) {
+            if (enableTreeOutput && !enableCodeGen) {
+                throw new RuntimeException("语法错误：非法十六进制整数，当前单词为：ILHEX，属性值：-");
+            }
             error("非法十六进制整数: " + lookahead.lexeme);
             lookahead = lexer.nextToken();
             return new ExprAttr("0");

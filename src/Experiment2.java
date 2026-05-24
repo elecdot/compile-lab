@@ -46,7 +46,7 @@ public class Experiment2 {
         String source = readSource();
 
         try {
-            String mode = args.length == 0 ? "--tree" : args[0];
+            String mode = args.length == 0 ? "--tac" : args[0];
 
             if (mode.equals("--tree")) {
                 parseAndPrintTree(source);
