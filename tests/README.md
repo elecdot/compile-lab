@@ -27,6 +27,8 @@ Directory entry point for project test cases and expected outputs.
   used as a loop body.
 - `lab3_tac_dangling_else.*`: TAC output proving `else` binds to the nearest
   unmatched `if`.
+- `lab3_tac_error_recovery.*`: Bison parser recovery from one malformed
+  statement followed by TAC output for the next valid statement.
 
 ## Local Conventions
 

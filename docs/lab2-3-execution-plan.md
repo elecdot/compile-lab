@@ -35,13 +35,12 @@ Lexer -> Bison Parser -> AST -> TacEmitter -> CodeGenerator -> TAC
 | 复合语句 | `begin ... end` |
 | 控制流 | 嵌套 `if/else`、嵌套 `while` |
 | 构建 | `make build` 自动生成 Bison parser 并编译 |
-| 测试 | 指导书样例、表达式优先级、嵌套控制流、扩展关系运算、复合语句、dangling else |
+| 测试 | 指导书样例、表达式优先级、嵌套控制流、扩展关系运算、复合语句、dangling else、错误恢复 |
 
 当前缺口：
 
 | 缺口 | 影响 |
 | --- | --- |
-| Bison 错误恢复不足 | 对实验指导书“更多错误处理”支撑不够 |
 | AST 没有展示入口 | `Parser -> AST -> TAC` 架构优势不直观 |
 | 无 TAC 优化模式 | 汇报中缺少 IR 层加分项 |
 | 自己做 YACC 未落地 | 需要明确取舍，避免报告被问住 |
@@ -107,7 +106,7 @@ if a > 0 then if b > 0 then x = 1 else x = 2;
 
 ### B. Bison 语句级错误恢复
 
-Status: planned.
+Status: done.
 
 目标：覆盖实验指导书扩展要求中的错误定位、续编译和简单错误处理。
 
@@ -148,10 +147,10 @@ y = b * c;
 
 完成标准：
 
-- 错误样例能报告位置。
+- 错误样例已能报告位置。
 - 后续合法语句 TAC 正常输出。
-- `make test` 全部通过。
-- 报告增加“错误恢复设计与效果”。
+- `make test` 已全部通过。
+- 设计报告已增加“错误恢复设计与效果”。
 
 ### C. AST 文本展示模式
 
@@ -345,10 +344,10 @@ Status: optional, do not block delivery.
 - [x] A2 新增 `lab3_tac_compound` fixture。
 - [x] A3 新增 `lab3_tac_dangling_else` fixture。
 - [x] A4 更新 `scripts/run_tests.sh` 并通过 `make test`。
-- [ ] B1 设计 Bison 错误恢复产生式。
-- [ ] B2 新增错误语句 AST 节点。
-- [ ] B3 `TacEmitter` 跳过错误节点。
-- [ ] B4 新增错误恢复 fixture 并通过 `make test`。
+- [x] B1 设计 Bison 错误恢复产生式。
+- [x] B2 新增错误语句 AST 节点。
+- [x] B3 `TacEmitter` 跳过错误节点。
+- [x] B4 新增错误恢复 fixture 并通过 `make test`。
 - [ ] C1 新增 `TacAstPrinter`。
 - [ ] C2 增加 `Experiment2 --ast`。
 - [ ] C3 新增 AST fixture 并通过 `make test`。

@@ -53,6 +53,9 @@ final class TacCompound extends TacStatement {
     }
 }
 
+final class TacError extends TacStatement {
+}
+
 abstract class TacExpr {
 }
 
@@ -87,4 +90,3 @@ final class TacCondition {
         this.right = right;
     }
 }
-

@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 final class BisonTacParser implements Parser {
     private final Lexer lexer;
     private final CodeGenerator codeGen;
@@ -21,6 +24,10 @@ final class BisonTacParser implements Parser {
             throw new RuntimeException("语法错误：未生成实验三语法树");
         }
 
+        for (String error : adapter.errorMessages()) {
+            codeGen.emit(error);
+        }
+
         new TacEmitter(codeGen).emitProgram(program);
     }
 
@@ -29,6 +36,7 @@ final class BisonTacParser implements Parser {
         private Token currentToken;
         private Object value;
         private String errorMessage = "语法错误";
+        private final List<String> errorMessages = new ArrayList<>();
 
         TacLexerAdapter(Lexer lexer) {
             this.lexer = lexer;
@@ -118,11 +126,15 @@ final class BisonTacParser implements Parser {
                 errorMessage = "语法错误 [行" + currentToken.line + "列" + currentToken.column + "]: "
                         + message + "（当前token: " + currentToken.type + " '" + currentToken.lexeme + "'）";
             }
+            errorMessages.add(errorMessage);
         }
 
         String errorMessage() {
             return errorMessage;
         }
+
+        List<String> errorMessages() {
+            return errorMessages;
+        }
     }
 }
-

@@ -92,6 +92,10 @@ statement
       {
           $$ = new TacAssign(tokenValue($1), (TacExpr) $3);
       }
+    | error
+      {
+          $$ = new TacError();
+      }
     | IF condition THEN statement %prec THEN
       {
           $$ = new TacIf((TacCondition) $2, (TacStatement) $4, null);

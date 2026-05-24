@@ -7,14 +7,28 @@ final class TacEmitter {
 
     void emitProgram(TacProgram program) {
         for (int i = 0; i < program.statements.size(); i++) {
-            String nextLabel = codeGen.newProgramNextLabel();
-            emitStatement(program.statements.get(i), nextLabel, null);
+            TacStatement statement = program.statements.get(i);
+            if (statement instanceof TacError) {
+                continue;
+            }
 
-            boolean hasNextStatement = i + 1 < program.statements.size();
+            String nextLabel = codeGen.newProgramNextLabel();
+            emitStatement(statement, nextLabel, null);
+
+            boolean hasNextStatement = hasFollowingValidStatement(program, i + 1);
             if (hasNextStatement || codeGen.isLabelReferenced(nextLabel)) {
                 codeGen.emitLabel(nextLabel);
             }
         }
+    }
+
+    private boolean hasFollowingValidStatement(TacProgram program, int start) {
+        for (int i = start; i < program.statements.size(); i++) {
+            if (!(program.statements.get(i) instanceof TacError)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void emitStatement(TacStatement statement, String nextLabel, String currentLabel) {
@@ -26,6 +40,8 @@ final class TacEmitter {
             emitWhile((TacWhile) statement, nextLabel, currentLabel);
         } else if (statement instanceof TacCompound) {
             emitCompound((TacCompound) statement, nextLabel, currentLabel);
+        } else if (statement instanceof TacError) {
+            return;
         } else {
             throw new RuntimeException("未知语句类型");
         }
@@ -105,4 +121,3 @@ final class TacEmitter {
         return temp;
     }
 }
-
