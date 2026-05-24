@@ -38,3 +38,4 @@ run_case lab3_tac_relop_extended Experiment2 --tac
 run_case lab3_tac_compound Experiment2 --tac
 run_case lab3_tac_dangling_else Experiment2 --tac
 run_case lab3_tac_error_recovery Experiment2 --tac
+run_case lab3_ast_sample Experiment2 --ast

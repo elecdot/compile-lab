@@ -15,14 +15,16 @@ Directory entry point for implementation source code.
 
 - `Main.java`: lab 1 lexer output entry point using the shared lexer.
 - `Experiment2.java`: lab 2 and lab 3 command-line entry point. Use `--tree`
-  for syntax-tree output and `--tac` for three-address-code output.
+  for syntax-tree output, `--tac` for three-address-code output, and `--ast`
+  for the Bison-path AST display used in reports.
 - `Parser.java`: parser interface and recursive-descent implementation used by
   lab 2 syntax-tree output.
 - `TacBisonParser.y`: Bison grammar for the lab 3 parser generated into
   `build/generated/src/TacBisonParser.java`.
 - `BisonTacParser.java`: adapter from the shared lexer to the Bison-generated
   lab 3 parser.
-- `TacAst.java` and `TacEmitter.java`: lab 3 AST model and TAC traversal.
+- `TacAst.java`, `TacAstPrinter.java`, and `TacEmitter.java`: lab 3 AST model,
+  report-facing AST display, and TAC traversal.
 - `Lexer.java`: shared lexer used by lab 1, lab 2, and lab 3 entry points.
 - `Token.java`: shared token model with lab-specific output helpers.
 - `ExprAttr.java`: expression attribute model used during TAC generation.

@@ -30,6 +30,17 @@ public class Experiment2 {
         return codeGen.getCodes();
     }
 
+    /**
+     * 实验二/三 Bison 路径的 AST 展示接口。
+     *
+     * 该接口服务报告和汇报展示，不替代实验三 TAC 输出。
+     */
+    public static List<String> printAstForExperiment3(String source) {
+        Lexer lexer = new Lexer(source);
+        TacProgram program = BisonTacParser.parseAst(lexer);
+        return new TacAstPrinter().print(program);
+    }
+
     private static String readSource() throws IOException {
         StringBuilder source = new StringBuilder();
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -55,6 +66,12 @@ public class Experiment2 {
 
                 for (String code : codes) {
                     System.out.println(code);
+                }
+            } else if (mode.equals("--ast")) {
+                List<String> lines = printAstForExperiment3(source);
+
+                for (String line : lines) {
+                    System.out.println(line);
                 }
             } else {
                 throw new RuntimeException("未知运行模式：" + mode);

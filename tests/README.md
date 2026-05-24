@@ -29,6 +29,7 @@ Directory entry point for project test cases and expected outputs.
   unmatched `if`.
 - `lab3_tac_error_recovery.*`: Bison parser recovery from one malformed
   statement followed by TAC output for the next valid statement.
+- `lab3_ast_sample.*`: AST text output for the Bison parser path used by lab 3.
 
 ## Local Conventions
 

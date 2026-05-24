@@ -12,6 +12,20 @@ final class BisonTacParser implements Parser {
 
     @Override
     public void parseProgram() {
+        ParseResult result = parse(lexer);
+
+        for (String error : result.errorMessages) {
+            codeGen.emit(error);
+        }
+
+        new TacEmitter(codeGen).emitProgram(result.program);
+    }
+
+    static TacProgram parseAst(Lexer lexer) {
+        return parse(lexer).program;
+    }
+
+    private static ParseResult parse(Lexer lexer) {
         TacLexerAdapter adapter = new TacLexerAdapter(lexer);
         TacBisonParser parser = new TacBisonParser(adapter);
 
@@ -24,11 +38,17 @@ final class BisonTacParser implements Parser {
             throw new RuntimeException("语法错误：未生成实验三语法树");
         }
 
-        for (String error : adapter.errorMessages()) {
-            codeGen.emit(error);
-        }
+        return new ParseResult(program, adapter.errorMessages());
+    }
 
-        new TacEmitter(codeGen).emitProgram(program);
+    private static final class ParseResult {
+        final TacProgram program;
+        final List<String> errorMessages;
+
+        ParseResult(TacProgram program, List<String> errorMessages) {
+            this.program = program;
+            this.errorMessages = errorMessages;
+        }
     }
 
     private static final class TacLexerAdapter implements TacBisonParser.Lexer {
