@@ -8,6 +8,7 @@ Directory entry point for project test cases and expected outputs.
 - Shared lexer contract fixtures.
 - Lab 2 syntax-tree fixtures.
 - Lab 3 three-address-code fixtures.
+- MiniYacc/SLR analysis-table demonstration fixtures.
 
 ## Fixtures
 
@@ -34,6 +35,8 @@ Directory entry point for project test cases and expected outputs.
   diagrams.
 - `lab3_tac_constant_folding.*`: optimized TAC output for AST-level constant
   folding through `Experiment2 --tac-opt`.
+- `minislr_table.*`: fixed expression grammar SLR demonstration, including
+  LR(0) item sets, GOTO transitions, and the ACTION/GOTO analysis table.
 
 ## Local Conventions
 
@@ -44,7 +47,7 @@ Directory entry point for project test cases and expected outputs.
 - Use `<area>_<case>.in` for input fixtures and `<area>_<case>.expected` for
   expected output.
 - Use stable area names such as `lab1`, `lab2_tree`, `lab3_tac`, `lexer`,
-  `parser`, `tac`, and `e2e`.
+  `parser`, `tac`, `minislr`, and `e2e`.
 - Prefer `lab2_tree` for syntax-tree fixtures and `lab3_tac` for
   three-address-code fixtures when the same source program is used across labs.
 - Keep `<case>` lowercase, descriptive, and separated with underscores.

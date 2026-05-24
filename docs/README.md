@@ -12,6 +12,8 @@ and final lab report.
   tree behavior.
 - [Three-address code notes](tac.md): lab 3 translation and output
   conventions.
+- [MiniYacc SLR demo](minislr-demo.md): fixed-grammar LR(0) item sets,
+  GOTO transitions, and ACTION/GOTO table output.
 - [Lab 2/3 design report](lab2-3-design-report.md): Bison-based parser and
   three-address-code generation design.
 - [Lab 2/3 execution plan](lab2-3-execution-plan.md): authoritative plan for

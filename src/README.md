@@ -9,6 +9,7 @@ Directory entry point for implementation source code.
 - Recursive-descent parser implementation for lab 2 tree output.
 - Bison grammar, adapter, AST, and emitter for lab 3 TAC output.
 - Three-address-code generation helpers.
+- Fixed-grammar MiniYacc/SLR demonstration for report and presentation support.
 - Shared model types used by compiler subsystems.
 
 ## Entry Points
@@ -28,6 +29,8 @@ Directory entry point for implementation source code.
   `TacEmitter.java`: lab 3 AST model, report-facing AST displays, and TAC
   traversal.
 - `TacOptimizer.java`: AST-level constant folding used by `--tac-opt`.
+- `MiniSlrDemo.java`: standalone SLR(1) demonstration for a fixed expression
+  grammar; prints LR(0) item sets, GOTO transitions, and an ACTION/GOTO table.
 - `Lexer.java`: shared lexer used by lab 1, lab 2, and lab 3 entry points.
 - `Token.java`: shared token model with lab-specific output helpers.
 - `ExprAttr.java`: expression attribute model used during TAC generation.

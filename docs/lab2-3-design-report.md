@@ -35,7 +35,7 @@
 | 续编译 | 部分覆盖。语句级错误恢复会跳过错误语句，并继续翻译后续合法语句。 |
 | 简单纠错 | 当前不做自动改写，只做语句级恢复。 |
 | 中间代码优化 | 已扩展 `--tac-opt` 常量折叠模式，默认 TAC 输出保持不变。 |
-| 自己做一个 YACC | 未作为主线实现。当前选择实验指导书允许的 GNU Bison 自动生成工具。 |
+| 自己做一个 YACC | 部分覆盖。主线采用 GNU Bison；另有 `MiniSlrDemo` 对固定表达式文法输出 LR(0) item 集、GOTO 转移和 ACTION/GOTO 表。 |
 
 ## 3. 总体架构
 
@@ -78,6 +78,7 @@ Source
 | `src/TacOptimizer.java` | AST 层常量折叠优化器。 |
 | `src/CodeGenerator.java` | 临时变量、标号和 TAC 输出格式管理。 |
 | `src/Experiment2.java` | 命令行入口：`--tac`、`--tac-opt`、`--ast`、`--ast-dot`、`--tree`。 |
+| `src/MiniSlrDemo.java` | 固定表达式文法的 MiniYacc/SLR 原理展示，输出 item 集和 ACTION/GOTO 表。 |
 | `Makefile` | 自动运行 Bison 并编译 Java 源码。 |
 
 ## 5. Bison 文法设计
@@ -338,6 +339,39 @@ z = t1
 
 测试：`lab3_tac_constant_folding.*`
 
+### 8.7 MiniYacc/SLR 分析表展示
+
+新增独立入口 `MiniSlrDemo`，用于展示“自己做 YACC”方向中的核心原理。该入口不替换 Bison 主线，也不参与实验三 TAC 生成。
+
+固定文法：
+
+```text
+(0) S' -> E
+(1) E -> E + T
+(2) E -> T
+(3) T -> T * F
+(4) T -> F
+(5) F -> ( E )
+(6) F -> id
+```
+
+运行命令：
+
+```sh
+java -cp build/classes MiniSlrDemo
+```
+
+输出内容：
+
+- 编号产生式；
+- 规范 LR(0) 项目集族；
+- 状态之间的 GOTO 转移；
+- 标准状态 ACTION/GOTO 分析表。
+
+ACTION 表中 `sN` 表示移进到状态 `N`，`rK` 表示按第 `K` 条产生式归约，`acc` 表示接受。GOTO 表给出非终结符 `E/T/F` 的状态转移。
+
+测试：`minislr_table.*`
+
 ## 9. 构建与运行
 
 构建：
@@ -368,6 +402,12 @@ java -cp build/classes Experiment2 --ast < tests/lab3_ast_sample.in
 
 ```sh
 java -cp build/classes Experiment2 --ast-dot < tests/lab3_ast_dot_sample.in
+```
+
+运行 MiniYacc/SLR 展示：
+
+```sh
+java -cp build/classes MiniSlrDemo
 ```
 
 默认模式：
@@ -404,12 +444,13 @@ make test
 | `lab3_ast_sample` | Bison 路径 AST 展示 |
 | `lab3_ast_dot_sample` | AST 的 Graphviz DOT 输出 |
 | `lab3_tac_constant_folding` | `--tac-opt` 常量折叠 |
+| `minislr_table` | MiniYacc/SLR 的 item 集、GOTO 转移和 ACTION/GOTO 表 |
 
 最近一次验证结果：
 
 ```text
 make test
-全部 14 个 fixture 通过
+全部 15 个 fixture 通过
 ```
 
 ## 11. 设计取舍
@@ -422,9 +463,9 @@ make test
 
 直接在 `.y` 文件中调用 `emit(...)` 可以更短，但语法和代码生成会强耦合。当前实现使用 AST 中间层，使 Bison action 只负责构造结构，TAC 生成集中在 Java 类中。
 
-### 11.3 使用 GNU Bison 而不是自己做 YACC
+### 11.3 使用 GNU Bison 作为主线，同时保留 MiniYacc 展示
 
-实验指导书允许使用 Yacc/Bison 等自动生成工具。自行实现 LR 分析表生成器属于更高成本扩展，当前未作为主线实现。报告和汇报中可说明：本实验重点放在“使用成熟 parser generator + 自定义 AST/TAC 后端”完成语法制导翻译。
+实验指导书允许使用 Yacc/Bison 等自动生成工具。当前主线使用 GNU Bison 保证完整实验语言的 parser 稳定可用；`MiniSlrDemo` 则用固定表达式文法展示 closure、GOTO、FOLLOW 归约和 ACTION/GOTO 表构造。报告和汇报中可说明：实验三生产路径是“成熟 parser generator + 自定义 AST/TAC 后端”，自制 YACC 部分定位为原理展示。
 
 ### 11.4 错误恢复边界
 
@@ -438,13 +479,13 @@ make test
 - 复合语句内部目前要求语句以分号结束；
 - 未实现布尔短路表达式；
 - 未实现声明、类型检查、数组等语义分析内容；
-- 未实现自制 LR 分析表生成器。
+- MiniYacc/SLR 展示仅支持固定表达式文法，不是通用 parser generator。
 
 可选后续扩展：
 
 - 更完整的 Bison 错误恢复；
 - 布尔表达式 `and/or/not` 与短路 TAC；
-- MiniYacc 原理展示：固定文法的 LR(0)/SLR item 集和 ACTION/GOTO 表。
+- MiniYacc 后续可扩展为读取外部文法并展示移进归约过程。
 
 ## 13. 总结
 
@@ -454,4 +495,4 @@ make test
 Lexer -> Bison-generated parser -> AST -> TacEmitter -> CodeGenerator -> TAC
 ```
 
-它覆盖实验指导书基本要求，并完成了全部关系运算、复合语句、dangling else、语句级错误恢复、AST 文本展示、AST DOT 展示和常量折叠等扩展。核心目标“通过 Bison 完成 parser 并实现实验三地址代码生成”已经达成。
+它覆盖实验指导书基本要求，并完成了全部关系运算、复合语句、dangling else、语句级错误恢复、AST 文本展示、AST DOT 展示、常量折叠和 MiniYacc/SLR 分析表展示等扩展。核心目标“通过 Bison 完成 parser 并实现实验三地址代码生成”已经达成。

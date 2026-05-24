@@ -36,14 +36,15 @@ Lexer -> Bison Parser -> AST -> TacEmitter -> CodeGenerator -> TAC
 | 控制流 | 嵌套 `if/else`、嵌套 `while` |
 | AST 展示 | `Experiment2 --ast` 输出 Bison 路径 AST，`--ast-dot` 输出 Graphviz DOT |
 | TAC 优化 | `Experiment2 --tac-opt` 输出常量折叠后的 TAC |
+| MiniYacc 展示 | `MiniSlrDemo` 输出固定表达式文法的 LR(0) item 集、GOTO 转移和 ACTION/GOTO 表 |
 | 构建 | `make build` 自动生成 Bison parser 并编译 |
-| 测试 | 指导书样例、表达式优先级、嵌套控制流、扩展关系运算、复合语句、dangling else、错误恢复、AST 展示、AST DOT 展示、常量折叠 |
+| 测试 | 指导书样例、表达式优先级、嵌套控制流、扩展关系运算、复合语句、dangling else、错误恢复、AST 展示、AST DOT 展示、常量折叠、SLR 表展示 |
 
 当前缺口：
 
 | 缺口 | 影响 |
 | --- | --- |
-| 自己做 YACC 未落地 | 需要明确取舍，避免报告被问住 |
+| 通用自制 YACC 未落地 | 已通过固定文法 MiniYacc/SLR 展示覆盖原理说明；不替换 Bison 主线 |
 
 ## 3. 执行顺序
 
@@ -254,27 +255,24 @@ x = 14
 
 ### E. MiniYacc 原理展示
 
-Status: optional, do not block delivery.
+Status: done as standalone demo.
 
 目标：回应“自己做一个 YACC”扩展项，但不替换 Bison 主线。
 
-推荐取舍：
+实现取舍：
 
 - 不接入实验三 TAC。
 - 不支持完整语言。
 - 只作为独立原理演示。
 
-最低版本：
+当前已实现范围：
 
 ```text
-固定表达式文法 -> LR(0) item 集族 -> GOTO 转移
+固定表达式文法 -> LR(0) item 集族 -> GOTO 转移 -> ACTION/GOTO 表
 ```
 
-增强版本：
-
-```text
-固定表达式文法 -> ACTION/GOTO 表 -> id+id*id 移进归约过程
-```
+暂不实现自动输入串分析轨迹；如汇报需要，可以人工选取 `id+id*id`
+结合 ACTION/GOTO 表解释移进归约过程。
 
 报告表述：
 
@@ -285,7 +283,8 @@ Status: optional, do not block delivery.
 
 完成标准：
 
-- 有单独 README 或报告附录解释 closure/goto/ACTION/GOTO。
+- 已有 `docs/minislr-demo.md` 解释 closure/goto/ACTION/GOTO 输出边界。
+- 已有 `tests/minislr_table.*` 固化输出。
 - 不影响主线测试。
 
 ## 4. 报告准备计划
@@ -299,9 +298,9 @@ Status: optional, do not block delivery.
 3. Bison 文法设计：语句、条件、表达式、优先级、dangling else。
 4. AST 设计：语句节点、表达式节点、条件节点。
 5. TAC 生成算法：赋值、if、if/else、while。
-6. 扩展内容：关系运算、复合语句、嵌套控制流、错误恢复、AST 展示、可选优化。
+6. 扩展内容：关系运算、复合语句、嵌套控制流、错误恢复、AST 展示、可选优化、MiniYacc/SLR 展示。
 7. 测试设计与结果。
-8. 设计取舍：不依赖原 parser、不直接在 Bison action 里输出 TAC、不主线实现 YACC。
+8. 设计取舍：不依赖原 parser、不直接在 Bison action 里输出 TAC、Bison 主线与 MiniYacc 展示分离。
 9. 总结与后续方向。
 
 报告需要补充的关键图：
@@ -311,10 +310,11 @@ Status: optional, do not block delivery.
 - `while` TAC 标号流图。
 - Bison 构建流程图。
 - 错误恢复同步点示意图。
+- MiniYacc/SLR ACTION/GOTO 表截图或节选。
 
 ## 5. 汇报展示计划
 
-建议 PPT 8 到 10 页：
+建议 PPT 9 到 11 页：
 
 1. 任务定位：Bison parser + TAC，独立于原实验二 parser。
 2. 总体架构：Lexer -> Bison Parser -> AST -> TAC。
@@ -323,15 +323,17 @@ Status: optional, do not block delivery.
 5. TAC 生成规则：赋值、if、while。
 6. 已完成扩展：关系运算、复合语句、dangling else。
 7. 错误恢复或 AST 展示。
-8. 测试结果：fixture 列表和 `make test`。
-9. 设计取舍：Bison vs 自己做 YACC，AST vs 直接语义动作。
-10. 总结。
+8. MiniYacc/SLR 展示：固定表达式文法的 item 集和 ACTION/GOTO 表。
+9. 测试结果：fixture 列表和 `make test`。
+10. 设计取舍：Bison vs 自己做 YACC，AST vs 直接语义动作。
+11. 总结。
 
 现场演示输入：
 
 1. 指导书样例：证明基本要求。
 2. 复合语句 + 扩展关系运算：证明语言扩展。
 3. 错误恢复或 AST 展示：证明工程化扩展。
+4. `MiniSlrDemo`：证明固定文法 SLR ACTION/GOTO 表可输出。
 
 ## 6. 风险控制
 
@@ -340,7 +342,7 @@ Status: optional, do not block delivery.
 | Bison `error` 产生式引入冲突 | 只在语句边界恢复，小步提交 |
 | AST 展示影响 TAC | 共用 parse-to-AST，保持 `--tac` fixture |
 | 优化改变原输出 | 新增 `--tac-opt`，默认不优化 |
-| MiniYacc 工作量过大 | 限定为附加原理展示 |
+| MiniYacc 范围被误解为完整 parser generator | 报告中明确它是固定文法 SLR 原理展示 |
 | 汇报内容分散 | 所有扩展都围绕 Bison + AST + TAC 主线 |
 
 ## 7. Ready-To-Execute Checklist
@@ -361,5 +363,8 @@ Status: optional, do not block delivery.
 - [x] D1 可选新增常量折叠优化。
 - [x] D2 可选新增 `Experiment2 --tac-opt`。
 - [x] D3 可选新增优化 fixture。
-- [ ] R1 更新最终实验报告。
+- [x] E1 新增 `MiniSlrDemo` 固定文法 SLR 表展示。
+- [x] E2 新增 `minislr_table` fixture。
+- [x] E3 新增 MiniYacc/SLR 说明文档。
+- [x] R1 更新最终实验报告。
 - [ ] P1 准备汇报 PPT 大纲和演示输入。
