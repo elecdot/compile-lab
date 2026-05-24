@@ -180,10 +180,29 @@ goto Lbegin
 - 表达式优先级测试；
 - 括号表达式测试；
 - 嵌套 `while`、`if/else` 控制流测试；
+- 扩展关系运算 `>= <= <>` 的 TAC 测试；
+- 复合语句 `begin ... end` 作为循环体的 TAC 测试；
+- dangling else 绑定最近未匹配 `if` 的 TAC 测试；
 - 顶层多语句 TAC 连续生成；
 - Bison 生成文件进入构建流程，不依赖手工生成。
 
-## 9. 构建与运行
+## 9. 扩展样例验证
+
+为使扩展内容可复现、可汇报，当前测试集中新增了三个实验三 TAC
+fixture。
+
+`lab3_tac_relop_extended.*` 验证在指导书原有 `> < =` 条件基础上扩展
+`>= <= <>`。这些关系运算统一通过 `relop` 规约进入 `TacCondition`，
+最终保留在条件跳转指令中。
+
+`lab3_tac_compound.*` 验证 `begin ... end` 复合语句。循环体可以包含多
+条赋值语句，TAC 生成时按块内语句顺序拼接，并在块结束后跳回循环入口。
+
+`lab3_tac_dangling_else.*` 验证 Bison 对 dangling else 的处理。通过
+`%prec THEN` 和 `%nonassoc ELSE`，`else` 绑定到最近的未匹配 `if`，
+符合常见程序语言语义。
+
+## 10. 构建与运行
 
 构建：
 
@@ -224,8 +243,11 @@ make test
 - 实验三指导书样例 TAC；
 - 表达式优先级 TAC；
 - 嵌套控制流 TAC。
+- 扩展关系运算 TAC；
+- 复合语句 TAC；
+- dangling else TAC。
 
-## 10. 设计取舍
+## 11. 设计取舍
 
 本实现有几个明确取舍：
 
@@ -241,7 +263,7 @@ make test
 4. 保留原递归下降 parser 仅用于兼容 `--tree`。
    这不是实验三路径依赖；实验三 TAC 已由 Bison parser 独立完成。
 
-## 11. 当前限制与后续方向
+## 12. 当前限制与后续方向
 
 当前限制：
 
@@ -259,7 +281,7 @@ make test
 - 增加数组、声明语句或更多赋值运算形式；
 - 增加针对 Bison parser 错误路径的 fixture。
 
-## 12. 结论
+## 13. 结论
 
 当前实现已经形成一条独立于原实验二 parser 的实验二/三主流程：
 

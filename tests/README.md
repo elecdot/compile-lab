@@ -21,6 +21,12 @@ Directory entry point for project test cases and expected outputs.
   parenthesized expressions.
 - `lab3_tac_nested_control.*`: TAC output for nested `while` and `if/else`
   control flow.
+- `lab3_tac_relop_extended.*`: TAC output for extended relational operators
+  `>=`, `<=`, and `<>`.
+- `lab3_tac_compound.*`: TAC output for a `begin ... end` compound statement
+  used as a loop body.
+- `lab3_tac_dangling_else.*`: TAC output proving `else` binds to the nearest
+  unmatched `if`.
 
 ## Local Conventions
 

@@ -34,3 +34,6 @@ run_case lab2_tree_invalid_octal Experiment2 --tree
 run_case lab3_tac_sample Experiment2 --tac
 run_case lab3_tac_precedence Experiment2 --tac
 run_case lab3_tac_nested_control Experiment2 --tac
+run_case lab3_tac_relop_extended Experiment2 --tac
+run_case lab3_tac_compound Experiment2 --tac
+run_case lab3_tac_dangling_else Experiment2 --tac

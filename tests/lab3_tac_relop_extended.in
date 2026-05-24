@@ -1,0 +1,3 @@
+if a >= b then x = 1;
+if a <= b then y = 2;
+if a <> b then z = 3;

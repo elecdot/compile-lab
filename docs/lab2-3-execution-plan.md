@@ -35,13 +35,12 @@ Lexer -> Bison Parser -> AST -> TacEmitter -> CodeGenerator -> TAC
 | 复合语句 | `begin ... end` |
 | 控制流 | 嵌套 `if/else`、嵌套 `while` |
 | 构建 | `make build` 自动生成 Bison parser 并编译 |
-| 测试 | 指导书样例、表达式优先级、嵌套控制流 |
+| 测试 | 指导书样例、表达式优先级、嵌套控制流、扩展关系运算、复合语句、dangling else |
 
 当前缺口：
 
 | 缺口 | 影响 |
 | --- | --- |
-| 缺少专门扩展 fixture | 已实现扩展缺少独立展示证据 |
 | Bison 错误恢复不足 | 对实验指导书“更多错误处理”支撑不够 |
 | AST 没有展示入口 | `Parser -> AST -> TAC` 架构优势不直观 |
 | 无 TAC 优化模式 | 汇报中缺少 IR 层加分项 |
@@ -51,7 +50,7 @@ Lexer -> Bison Parser -> AST -> TacEmitter -> CodeGenerator -> TAC
 
 ### A. 扩展 fixture 固化
 
-Status: next.
+Status: done.
 
 目标：先不新增复杂语法，把已经实现的扩展能力固化成可测试、可演示的样例。
 
@@ -102,9 +101,9 @@ if a > 0 then if b > 0 then x = 1 else x = 2;
 
 完成标准：
 
-- 新 fixture 加入 `scripts/run_tests.sh`。
-- `make test` 全部通过。
-- 设计报告增加“扩展样例验证”。
+- 新 fixture 已加入 `scripts/run_tests.sh`。
+- `make test` 已全部通过。
+- 设计报告已增加“扩展样例验证”。
 
 ### B. Bison 语句级错误恢复
 
@@ -342,10 +341,10 @@ Status: optional, do not block delivery.
 
 ## 7. Ready-To-Execute Checklist
 
-- [ ] A1 新增 `lab3_tac_relop_extended` fixture。
-- [ ] A2 新增 `lab3_tac_compound` fixture。
-- [ ] A3 新增 `lab3_tac_dangling_else` fixture。
-- [ ] A4 更新 `scripts/run_tests.sh` 并通过 `make test`。
+- [x] A1 新增 `lab3_tac_relop_extended` fixture。
+- [x] A2 新增 `lab3_tac_compound` fixture。
+- [x] A3 新增 `lab3_tac_dangling_else` fixture。
+- [x] A4 更新 `scripts/run_tests.sh` 并通过 `make test`。
 - [ ] B1 设计 Bison 错误恢复产生式。
 - [ ] B2 新增错误语句 AST 节点。
 - [ ] B3 `TacEmitter` 跳过错误节点。
@@ -358,4 +357,3 @@ Status: optional, do not block delivery.
 - [ ] D3 可选新增优化 fixture。
 - [ ] R1 更新最终实验报告。
 - [ ] P1 准备汇报 PPT 大纲和演示输入。
-

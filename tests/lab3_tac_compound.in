@@ -1,0 +1,4 @@
+while a < b do begin
+  x = x + 1;
+  y = y * 2;
+end;
