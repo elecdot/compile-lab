@@ -82,6 +82,7 @@ top_statements
       }
     ;
 
+// 允许程序末尾有一个可选的分号，方便用户习惯
 opt_semi
     : %empty
     | SEMI

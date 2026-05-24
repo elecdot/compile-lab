@@ -12,22 +12,29 @@ final class TacEmitter {
                 continue;
             }
 
-            String nextLabel = codeGen.newProgramNextLabel();
+            String nextLabel = statementCanReferenceNextLabel(statement) ? codeGen.newProgramNextLabel() : null;
             emitStatement(statement, nextLabel, null);
 
-            boolean hasNextStatement = hasFollowingValidStatement(program, i + 1);
-            if (hasNextStatement || codeGen.isLabelReferenced(nextLabel)) {
+            if (nextLabel != null && codeGen.isLabelReferenced(nextLabel)) {
                 codeGen.emitLabel(nextLabel);
             }
         }
     }
 
-    private boolean hasFollowingValidStatement(TacProgram program, int start) {
-        for (int i = start; i < program.statements.size(); i++) {
-            if (!(program.statements.get(i) instanceof TacError)) {
-                return true;
+    private boolean statementCanReferenceNextLabel(TacStatement statement) {
+        if (statement instanceof TacIf || statement instanceof TacWhile) {
+            return true;
+        }
+
+        if (statement instanceof TacCompound) {
+            TacCompound compound = (TacCompound) statement;
+            for (TacStatement inner : compound.statements) {
+                if (statementCanReferenceNextLabel(inner)) {
+                    return true;
+                }
             }
         }
+
         return false;
     }
 
