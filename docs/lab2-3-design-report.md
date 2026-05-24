@@ -298,6 +298,13 @@ y = t1
 
 测试：`lab3_tac_error_recovery.*`
 
+补充错误恢复 fixture：
+
+- `lab3_tac_error_missing_rparen.*`：表达式缺右括号；
+- `lab3_tac_error_missing_then.*`：`if` 语句缺 `then`；
+- `lab3_tac_error_compound_recovery.*`：复合语句内部错误后继续块内和块外翻译；
+- `lab3_tac_error_multiple.*`：连续多个错误语句后继续翻译合法语句。
+
 ### 8.5 AST 展示
 
 新增 `--ast` 模式，展示 Bison parser 构建出的 AST，支撑报告和汇报中的架构说明。
@@ -441,6 +448,10 @@ make test
 | `lab3_tac_compound` | 复合语句 |
 | `lab3_tac_dangling_else` | dangling else 绑定规则 |
 | `lab3_tac_error_recovery` | 语句级错误恢复 |
+| `lab3_tac_error_missing_rparen` | 缺右括号后的语句级恢复 |
+| `lab3_tac_error_missing_then` | 缺 `then` 后的语句级恢复 |
+| `lab3_tac_error_compound_recovery` | 复合语句内部错误恢复 |
+| `lab3_tac_error_multiple` | 连续多个错误的收集与恢复 |
 | `lab3_ast_sample` | Bison 路径 AST 展示 |
 | `lab3_ast_dot_sample` | AST 的 Graphviz DOT 输出 |
 | `lab3_tac_constant_folding` | `--tac-opt` 常量折叠 |
@@ -450,7 +461,7 @@ make test
 
 ```text
 make test
-全部 15 个 fixture 通过
+全部 19 个 fixture 通过
 ```
 
 ## 11. 设计取舍

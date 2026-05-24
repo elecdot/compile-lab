@@ -1,0 +1,5 @@
+begin
+x = a + ;
+y = b;
+end;
+z = c;

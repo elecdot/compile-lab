@@ -1,0 +1,3 @@
+语法错误 [行1列9]: syntax error, unexpected SEMI（当前token: SEMI ';'）
+语法错误 [行2列9]: syntax error, unexpected SEMI（当前token: SEMI ';'）
+z = c

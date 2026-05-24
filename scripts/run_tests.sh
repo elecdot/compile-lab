@@ -38,6 +38,10 @@ run_case lab3_tac_relop_extended Experiment2 --tac
 run_case lab3_tac_compound Experiment2 --tac
 run_case lab3_tac_dangling_else Experiment2 --tac
 run_case lab3_tac_error_recovery Experiment2 --tac
+run_case lab3_tac_error_missing_rparen Experiment2 --tac
+run_case lab3_tac_error_missing_then Experiment2 --tac
+run_case lab3_tac_error_compound_recovery Experiment2 --tac
+run_case lab3_tac_error_multiple Experiment2 --tac
 run_case lab3_ast_sample Experiment2 --ast
 run_case lab3_ast_dot_sample Experiment2 --ast-dot
 run_case lab3_tac_constant_folding Experiment2 --tac-opt

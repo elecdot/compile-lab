@@ -30,6 +30,14 @@ Directory entry point for project test cases and expected outputs.
   unmatched `if`.
 - `lab3_tac_error_recovery.*`: Bison parser recovery from one malformed
   statement followed by TAC output for the next valid statement.
+- `lab3_tac_error_missing_rparen.*`: recovery from a parenthesized expression
+  missing its closing `)`.
+- `lab3_tac_error_missing_then.*`: recovery from an `if` statement missing
+  `then`.
+- `lab3_tac_error_compound_recovery.*`: recovery from a malformed statement
+  inside `begin ... end`, followed by later block and top-level TAC.
+- `lab3_tac_error_multiple.*`: collection of multiple syntax errors before
+  continuing with the next valid statement.
 - `lab3_ast_sample.*`: AST text output for the Bison parser path used by lab 3.
 - `lab3_ast_dot_sample.*`: Graphviz DOT AST output for report and presentation
   diagrams.
