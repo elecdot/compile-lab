@@ -34,6 +34,7 @@
 | 错误定位 | 已覆盖。错误信息包含行列位置和当前 token。 |
 | 续编译 | 部分覆盖。语句级错误恢复会跳过错误语句，并继续翻译后续合法语句。 |
 | 简单纠错 | 当前不做自动改写，只做语句级恢复。 |
+| 中间代码优化 | 已扩展 `--tac-opt` 常量折叠模式，默认 TAC 输出保持不变。 |
 | 自己做一个 YACC | 未作为主线实现。当前选择实验指导书允许的 GNU Bison 自动生成工具。 |
 
 ## 3. 总体架构
@@ -45,6 +46,7 @@ Source
   -> Lexer
   -> Bison-generated parser
   -> AST
+  -> optional TacOptimizer
   -> TacEmitter
   -> CodeGenerator
   -> TAC
@@ -56,8 +58,9 @@ Source
 2. `TacBisonParser.y`：描述实验二/三语言文法，由 Bison 生成 Java parser。
 3. `BisonTacParser`：适配项目已有 lexer 与 Bison parser 接口。
 4. `TacAst`：保存语法分析后的抽象语法树。
-5. `TacEmitter`：根据语法制导定义遍历 AST，生成三地址代码。
-6. `CodeGenerator`：管理临时变量、标号、跳转指令和最终输出格式。
+5. `TacOptimizer`：可选执行 AST 层常量折叠。
+6. `TacEmitter`：根据语法制导定义遍历 AST，生成三地址代码。
+7. `CodeGenerator`：管理临时变量、标号、跳转指令和最终输出格式。
 
 选择 AST 作为中间层，是为了把语法分析和 TAC 生成分离。Bison action 只负责构造 AST，不直接输出代码；这样文法文件更清晰，TAC 生成逻辑也更容易测试和扩展。
 
@@ -70,9 +73,11 @@ Source
 | `src/BisonTacParser.java` | 将 `Lexer` 适配给 Bison parser，并提供 parse-to-AST 入口。 |
 | `src/TacAst.java` | AST 节点定义。 |
 | `src/TacAstPrinter.java` | AST 文本展示，用于报告和汇报。 |
+| `src/TacAstDotPrinter.java` | AST Graphviz DOT 输出，用于生成汇报图。 |
 | `src/TacEmitter.java` | AST 到三地址代码的生成器。 |
+| `src/TacOptimizer.java` | AST 层常量折叠优化器。 |
 | `src/CodeGenerator.java` | 临时变量、标号和 TAC 输出格式管理。 |
-| `src/Experiment2.java` | 命令行入口：`--tac`、`--ast`、`--tree`。 |
+| `src/Experiment2.java` | 命令行入口：`--tac`、`--tac-opt`、`--ast`、`--ast-dot`、`--tree`。 |
 | `Makefile` | 自动运行 Bison 并编译 Java 源码。 |
 
 ## 5. Bison 文法设计
@@ -145,6 +150,14 @@ AST 展示命令：
 ```sh
 java -cp build/classes Experiment2 --ast < tests/lab3_ast_sample.in
 ```
+
+DOT 展示命令：
+
+```sh
+java -cp build/classes Experiment2 --ast-dot < tests/lab3_ast_dot_sample.in
+```
+
+`--ast-dot` 只输出 Graphviz DOT 文本，项目本身不依赖 Graphviz；需要图片时可以在外部使用 `dot -Tpng` 渲染。
 
 示例输出：
 
@@ -284,11 +297,46 @@ y = t1
 
 测试：`lab3_tac_error_recovery.*`
 
-### 8.5 AST 文本展示
+### 8.5 AST 展示
 
 新增 `--ast` 模式，展示 Bison parser 构建出的 AST，支撑报告和汇报中的架构说明。
 
 测试：`lab3_ast_sample.*`
+
+新增 `--ast-dot` 模式，输出同一棵 AST 的 Graphviz DOT 文本，用于生成报告或 PPT 中的结构图。
+
+测试：`lab3_ast_dot_sample.*`
+
+### 8.6 常量折叠优化
+
+新增 `--tac-opt` 模式，在 AST 层进行简单常量折叠，然后再生成 TAC。
+
+优化范围：
+
+- 只折叠左右操作数都是整数常量的 `TacBinary`；
+- 支持 `+ - * /`；
+- 除数为 0 时不折叠，避免改变源程序语义；
+- 不做变量传播、公共子表达式删除或死代码删除；
+- 默认 `--tac` 输出保持未优化，保证指导书样例和既有 fixture 稳定。
+
+示例：
+
+```text
+x = 2 + 3 * 4;
+y = (10 - 6) / 2;
+z = a + 1 * 2;
+```
+
+优化输出：
+
+```text
+x = 14
+L0: y = 2
+L1: t1 := a + 2
+z = t1
+```
+
+测试：`lab3_tac_constant_folding.*`
 
 ## 9. 构建与运行
 
@@ -304,10 +352,22 @@ make build
 java -cp build/classes Experiment2 --tac < tests/lab3_tac_sample.in
 ```
 
+运行常量折叠 TAC：
+
+```sh
+java -cp build/classes Experiment2 --tac-opt < tests/lab3_tac_constant_folding.in
+```
+
 运行 AST 展示：
 
 ```sh
 java -cp build/classes Experiment2 --ast < tests/lab3_ast_sample.in
+```
+
+运行 AST DOT 展示：
+
+```sh
+java -cp build/classes Experiment2 --ast-dot < tests/lab3_ast_dot_sample.in
 ```
 
 默认模式：
@@ -342,12 +402,14 @@ make test
 | `lab3_tac_dangling_else` | dangling else 绑定规则 |
 | `lab3_tac_error_recovery` | 语句级错误恢复 |
 | `lab3_ast_sample` | Bison 路径 AST 展示 |
+| `lab3_ast_dot_sample` | AST 的 Graphviz DOT 输出 |
+| `lab3_tac_constant_folding` | `--tac-opt` 常量折叠 |
 
 最近一次验证结果：
 
 ```text
 make test
-全部 12 个 fixture 通过
+全部 14 个 fixture 通过
 ```
 
 ## 11. 设计取舍
@@ -380,8 +442,6 @@ make test
 
 可选后续扩展：
 
-- AST DOT 输出，用 Graphviz 生成 AST 图片用于汇报；
-- `--tac-opt` 常量折叠优化；
 - 更完整的 Bison 错误恢复；
 - 布尔表达式 `and/or/not` 与短路 TAC；
 - MiniYacc 原理展示：固定文法的 LR(0)/SLR item 集和 ACTION/GOTO 表。
@@ -394,4 +454,4 @@ make test
 Lexer -> Bison-generated parser -> AST -> TacEmitter -> CodeGenerator -> TAC
 ```
 
-它覆盖实验指导书基本要求，并完成了全部关系运算、复合语句、dangling else、语句级错误恢复和 AST 展示等扩展。核心目标“通过 Bison 完成 parser 并实现实验三地址代码生成”已经达成。
+它覆盖实验指导书基本要求，并完成了全部关系运算、复合语句、dangling else、语句级错误恢复、AST 文本展示、AST DOT 展示和常量折叠等扩展。核心目标“通过 Bison 完成 parser 并实现实验三地址代码生成”已经达成。

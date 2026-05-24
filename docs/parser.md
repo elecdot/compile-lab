@@ -9,6 +9,8 @@ three-address-code generation.
 - `Experiment2 --tac` parses stdin and prints lab 3 three-address code.
 - `Experiment2 --ast` parses stdin through the Bison lab 3 path and prints the
   internal AST used before TAC generation.
+- `Experiment2 --ast-dot` prints the same AST in Graphviz DOT format for
+  report and presentation diagrams.
 - `Experiment2` without arguments defaults to `--tac`.
 - `Parsers.forTree(...)` constructs the parser mode used by lab 2.
 - `Parsers.forTac(...)` constructs the Bison-generated parser mode used by
@@ -56,7 +58,8 @@ Lab 3 syntax is recognized by the Bison-generated parser. The generated parser
 builds a small AST, and `TacEmitter` traverses that AST with the existing
 `CodeGenerator` so label, temporary, and formatting behavior stays aligned with
 the lab 3 fixtures. `TacAstPrinter` can print that AST for report and
-presentation use without changing default TAC output.
+presentation use without changing default TAC output; `TacAstDotPrinter` can
+emit the same tree as Graphviz DOT text.
 
 ## Test Coverage
 
@@ -69,5 +72,6 @@ presentation use without changing default TAC output.
 - `tests/lab3_tac_nested_control.*` protects nested `while` and `if/else`
   parsing through TAC output.
 - `tests/lab3_ast_sample.*` protects Bison-path AST display.
+- `tests/lab3_ast_dot_sample.*` protects Graphviz DOT AST display.
 - Add focused fixtures before changing grammar acceptance, error messages, or
   tree formatting.

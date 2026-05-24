@@ -31,6 +31,24 @@ public class Experiment2 {
     }
 
     /**
+     * 实验三扩展接口：生成经过常量折叠的三地址代码。
+     */
+    public static List<String> generateOptimizedCodeForExperiment3(String source) {
+        Lexer lexer = new Lexer(source);
+        CodeGenerator codeGen = new CodeGenerator();
+        BisonTacParser.ParseResult result = BisonTacParser.parseForExperiment3(lexer);
+
+        for (String error : result.errorMessages) {
+            codeGen.emit(error);
+        }
+
+        TacProgram optimized = new TacOptimizer().foldConstants(result.program);
+        new TacEmitter(codeGen).emitProgram(optimized);
+
+        return codeGen.getCodes();
+    }
+
+    /**
      * 实验二/三 Bison 路径的 AST 展示接口。
      *
      * 该接口服务报告和汇报展示，不替代实验三 TAC 输出。
@@ -39,6 +57,15 @@ public class Experiment2 {
         Lexer lexer = new Lexer(source);
         TacProgram program = BisonTacParser.parseAst(lexer);
         return new TacAstPrinter().print(program);
+    }
+
+    /**
+     * 实验二/三 Bison 路径的 Graphviz DOT AST 展示接口。
+     */
+    public static List<String> printAstDotForExperiment3(String source) {
+        Lexer lexer = new Lexer(source);
+        TacProgram program = BisonTacParser.parseAst(lexer);
+        return new TacAstDotPrinter().print(program);
     }
 
     private static String readSource() throws IOException {
@@ -67,8 +94,20 @@ public class Experiment2 {
                 for (String code : codes) {
                     System.out.println(code);
                 }
+            } else if (mode.equals("--tac-opt")) {
+                List<String> codes = generateOptimizedCodeForExperiment3(source);
+
+                for (String code : codes) {
+                    System.out.println(code);
+                }
             } else if (mode.equals("--ast")) {
                 List<String> lines = printAstForExperiment3(source);
+
+                for (String line : lines) {
+                    System.out.println(line);
+                }
+            } else if (mode.equals("--ast-dot")) {
+                List<String> lines = printAstDotForExperiment3(source);
 
                 for (String line : lines) {
                     System.out.println(line);

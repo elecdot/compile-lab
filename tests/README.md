@@ -30,6 +30,10 @@ Directory entry point for project test cases and expected outputs.
 - `lab3_tac_error_recovery.*`: Bison parser recovery from one malformed
   statement followed by TAC output for the next valid statement.
 - `lab3_ast_sample.*`: AST text output for the Bison parser path used by lab 3.
+- `lab3_ast_dot_sample.*`: Graphviz DOT AST output for report and presentation
+  diagrams.
+- `lab3_tac_constant_folding.*`: optimized TAC output for AST-level constant
+  folding through `Experiment2 --tac-opt`.
 
 ## Local Conventions
 

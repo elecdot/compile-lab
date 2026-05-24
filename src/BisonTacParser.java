@@ -25,6 +25,10 @@ final class BisonTacParser implements Parser {
         return parse(lexer).program;
     }
 
+    static ParseResult parseForExperiment3(Lexer lexer) {
+        return parse(lexer);
+    }
+
     private static ParseResult parse(Lexer lexer) {
         TacLexerAdapter adapter = new TacLexerAdapter(lexer);
         TacBisonParser parser = new TacBisonParser(adapter);
@@ -41,7 +45,7 @@ final class BisonTacParser implements Parser {
         return new ParseResult(program, adapter.errorMessages());
     }
 
-    private static final class ParseResult {
+    static final class ParseResult {
         final TacProgram program;
         final List<String> errorMessages;
 

@@ -34,15 +34,15 @@ Lexer -> Bison Parser -> AST -> TacEmitter -> CodeGenerator -> TAC
 | 扩展关系运算 | `> < = >= <= <>` |
 | 复合语句 | `begin ... end` |
 | 控制流 | 嵌套 `if/else`、嵌套 `while` |
-| AST 展示 | `Experiment2 --ast` 输出 Bison 路径 AST |
+| AST 展示 | `Experiment2 --ast` 输出 Bison 路径 AST，`--ast-dot` 输出 Graphviz DOT |
+| TAC 优化 | `Experiment2 --tac-opt` 输出常量折叠后的 TAC |
 | 构建 | `make build` 自动生成 Bison parser 并编译 |
-| 测试 | 指导书样例、表达式优先级、嵌套控制流、扩展关系运算、复合语句、dangling else、错误恢复、AST 展示 |
+| 测试 | 指导书样例、表达式优先级、嵌套控制流、扩展关系运算、复合语句、dangling else、错误恢复、AST 展示、AST DOT 展示、常量折叠 |
 
 当前缺口：
 
 | 缺口 | 影响 |
 | --- | --- |
-| 无 TAC 优化模式 | 汇报中缺少 IR 层加分项 |
 | 自己做 YACC 未落地 | 需要明确取舍，避免报告被问住 |
 
 ## 3. 执行顺序
@@ -152,7 +152,7 @@ y = b * c;
 - `make test` 已全部通过。
 - 设计报告已增加“错误恢复设计与效果”。
 
-### C. AST 文本展示模式
+### C. AST 展示模式
 
 Status: done.
 
@@ -162,6 +162,7 @@ Status: done.
 
 ```sh
 java -cp build/classes Experiment2 --ast < input.in
+java -cp build/classes Experiment2 --ast-dot < input.in
 ```
 
 输出示例：
@@ -186,6 +187,7 @@ Program
 建议实现：
 
 - 新增 `TacAstPrinter.java`。
+- 新增 `TacAstDotPrinter.java`。
 - 抽出 Bison parse-to-AST 入口，供 `--tac` 和 `--ast` 共用。
 - `--tac` 默认行为保持不变。
 
@@ -193,16 +195,19 @@ Program
 
 - `tests/lab3_ast_sample.in`
 - `tests/lab3_ast_sample.expected`
+- `tests/lab3_ast_dot_sample.in`
+- `tests/lab3_ast_dot_sample.expected`
 
 完成标准：
 
 - AST 输出结构稳定。
+- AST DOT 输出结构稳定。
 - TAC fixture 不受影响。
-- PPT 可放“源程序 / AST / TAC”三栏对照。
+- PPT 可放“源程序 / AST / DOT 图 / TAC”对照。
 
 ### D. 常量折叠优化模式
 
-Status: optional.
+Status: done.
 
 目标：展示 TAC 生成后已经进入 IR 层，可以进行基础优化。
 
@@ -351,8 +356,10 @@ Status: optional, do not block delivery.
 - [x] C1 新增 `TacAstPrinter`。
 - [x] C2 增加 `Experiment2 --ast`。
 - [x] C3 新增 AST fixture 并通过 `make test`。
-- [ ] D1 可选新增常量折叠优化。
-- [ ] D2 可选新增 `Experiment2 --tac-opt`。
-- [ ] D3 可选新增优化 fixture。
+- [x] C4 新增 `TacAstDotPrinter` 和 `Experiment2 --ast-dot`。
+- [x] C5 新增 AST DOT fixture 并通过 `make test`。
+- [x] D1 可选新增常量折叠优化。
+- [x] D2 可选新增 `Experiment2 --tac-opt`。
+- [x] D3 可选新增优化 fixture。
 - [ ] R1 更新最终实验报告。
 - [ ] P1 准备汇报 PPT 大纲和演示输入。

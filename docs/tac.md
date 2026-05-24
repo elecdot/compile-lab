@@ -19,6 +19,8 @@ implementation and tests.
 - `Experiment2 --tree` prints the lab 2 syntax tree.
 - `Experiment2 --tac` prints lab 3 three-address code through the parser
   generated from `src/TacBisonParser.y`.
+- `Experiment2 --tac-opt` prints TAC after AST-level constant folding. The
+  default `--tac` output remains unoptimized for fixture compatibility.
 - `make build` runs Bison and writes the generated parser to
   `build/generated/src/TacBisonParser.java`.
 - Labels are printed inline with the following instruction when possible,
@@ -29,4 +31,5 @@ implementation and tests.
 - Expression precedence is tracked by `tests/lab3_tac_precedence.*`.
 - Nested `while` and `if/else` control flow is tracked by
   `tests/lab3_tac_nested_control.*`.
+- Constant folding is tracked by `tests/lab3_tac_constant_folding.*`.
 - These fixtures run in the default `make test` suite.
