@@ -34,14 +34,14 @@ Lexer -> Bison Parser -> AST -> TacEmitter -> CodeGenerator -> TAC
 | 扩展关系运算 | `> < = >= <= <>` |
 | 复合语句 | `begin ... end` |
 | 控制流 | 嵌套 `if/else`、嵌套 `while` |
+| AST 展示 | `Experiment2 --ast` 输出 Bison 路径 AST |
 | 构建 | `make build` 自动生成 Bison parser 并编译 |
-| 测试 | 指导书样例、表达式优先级、嵌套控制流、扩展关系运算、复合语句、dangling else、错误恢复 |
+| 测试 | 指导书样例、表达式优先级、嵌套控制流、扩展关系运算、复合语句、dangling else、错误恢复、AST 展示 |
 
 当前缺口：
 
 | 缺口 | 影响 |
 | --- | --- |
-| AST 没有展示入口 | `Parser -> AST -> TAC` 架构优势不直观 |
 | 无 TAC 优化模式 | 汇报中缺少 IR 层加分项 |
 | 自己做 YACC 未落地 | 需要明确取舍，避免报告被问住 |
 
@@ -154,7 +154,7 @@ y = b * c;
 
 ### C. AST 文本展示模式
 
-Status: planned.
+Status: done.
 
 目标：让 `Parser -> AST -> TAC` 架构在汇报中直观看见。
 
@@ -348,9 +348,9 @@ Status: optional, do not block delivery.
 - [x] B2 新增错误语句 AST 节点。
 - [x] B3 `TacEmitter` 跳过错误节点。
 - [x] B4 新增错误恢复 fixture 并通过 `make test`。
-- [ ] C1 新增 `TacAstPrinter`。
-- [ ] C2 增加 `Experiment2 --ast`。
-- [ ] C3 新增 AST fixture 并通过 `make test`。
+- [x] C1 新增 `TacAstPrinter`。
+- [x] C2 增加 `Experiment2 --ast`。
+- [x] C3 新增 AST fixture 并通过 `make test`。
 - [ ] D1 可选新增常量折叠优化。
 - [ ] D2 可选新增 `Experiment2 --tac-opt`。
 - [ ] D3 可选新增优化 fixture。
