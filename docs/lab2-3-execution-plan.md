@@ -36,9 +36,9 @@ Lexer -> Bison Parser -> AST -> TacEmitter -> CodeGenerator -> TAC
 | 控制流 | 嵌套 `if/else`、嵌套 `while` |
 | AST 展示 | `Experiment2 --ast` 输出 Bison 路径 AST，`--ast-dot` 输出 Graphviz DOT |
 | TAC 优化 | `Experiment2 --tac-opt` 输出常量折叠后的 TAC |
-| MiniYacc 展示 | `MiniSlrDemo` 输出固定表达式文法的 LR(0) item 集、GOTO 转移和 ACTION/GOTO 表 |
+| MiniYacc 展示 | `MiniSlrDemo` 输出固定表达式文法的 LR(0) item 集、GOTO 转移、ACTION/GOTO 表和状态自动机 DOT |
 | 构建 | `make build` 自动生成 Bison parser 并编译 |
-| 测试 | 指导书样例、表达式优先级、嵌套控制流、扩展关系运算、复合语句、dangling else、错误恢复细分场景、AST 展示、AST DOT 展示、常量折叠、SLR 表展示 |
+| 测试 | 指导书样例、表达式优先级、嵌套控制流、扩展关系运算、复合语句、dangling else、错误恢复细分场景、AST 展示、AST DOT 展示、常量折叠、SLR 表展示、SLR DOT 展示 |
 
 当前缺口：
 
@@ -272,7 +272,7 @@ Status: done as standalone demo.
 当前已实现范围：
 
 ```text
-固定表达式文法 -> LR(0) item 集族 -> GOTO 转移 -> ACTION/GOTO 表
+固定表达式文法 -> LR(0) item 集族 -> GOTO 转移 -> ACTION/GOTO 表 -> LR(0) 自动机 DOT
 ```
 
 暂不实现自动输入串分析轨迹；如汇报需要，可以人工选取 `id+id*id`
@@ -288,7 +288,7 @@ Status: done as standalone demo.
 完成标准：
 
 - 已有 `docs/minislr-demo.md` 解释 closure/goto/ACTION/GOTO 输出边界。
-- 已有 `tests/minislr_table.*` 固化输出。
+- 已有 `tests/minislr_table.*` 和 `tests/minislr_dot.*` 固化输出。
 - 不影响主线测试。
 
 ## 4. 报告准备计划
@@ -371,5 +371,6 @@ Status: done as standalone demo.
 - [x] E1 新增 `MiniSlrDemo` 固定文法 SLR 表展示。
 - [x] E2 新增 `minislr_table` fixture。
 - [x] E3 新增 MiniYacc/SLR 说明文档。
+- [x] E4 新增 `MiniSlrDemo --dot` 和 `minislr_dot` fixture。
 - [x] R1 更新最终实验报告。
 - [ ] P1 准备汇报 PPT 大纲和演示输入。

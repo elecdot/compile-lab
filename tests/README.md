@@ -45,6 +45,8 @@ Directory entry point for project test cases and expected outputs.
   folding through `Experiment2 --tac-opt`.
 - `minislr_table.*`: fixed expression grammar SLR demonstration, including
   LR(0) item sets, GOTO transitions, and the ACTION/GOTO analysis table.
+- `minislr_dot.*`: Graphviz DOT output for the fixed expression grammar LR(0)
+  state automaton.
 
 ## Local Conventions
 

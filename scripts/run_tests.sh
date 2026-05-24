@@ -46,3 +46,4 @@ run_case lab3_ast_sample Experiment2 --ast
 run_case lab3_ast_dot_sample Experiment2 --ast-dot
 run_case lab3_tac_constant_folding Experiment2 --tac-opt
 run_case minislr_table MiniSlrDemo
+run_case minislr_dot MiniSlrDemo --dot

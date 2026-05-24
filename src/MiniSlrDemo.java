@@ -21,7 +21,10 @@ public class MiniSlrDemo {
 
     public static void main(String[] args) {
         MiniSlrDemo demo = new MiniSlrDemo();
-        for (String line : demo.render()) {
+        List<String> lines = args.length > 0 && "--dot".equals(args[0])
+                ? demo.renderDot()
+                : demo.render();
+        for (String line : lines) {
             System.out.println(line);
         }
     }
@@ -86,6 +89,28 @@ public class MiniSlrDemo {
             lines.add(joinCells(cells));
         }
 
+        return lines;
+    }
+
+    private List<String> renderDot() {
+        Automaton automaton = buildAutomaton();
+        List<String> lines = new ArrayList<>();
+
+        lines.add("digraph MiniSlrAutomaton {");
+        lines.add("  rankdir=LR;");
+        lines.add("  node [shape=box, fontname=\"monospace\"];");
+        lines.add("  edge [fontname=\"monospace\"];");
+
+        for (int i = 0; i < automaton.states.size(); i++) {
+            lines.add("  I" + i + " [label=\"" + dotStateLabel(i, automaton.states.get(i)) + "\"];");
+        }
+
+        for (Transition transition : automaton.transitions) {
+            lines.add("  I" + transition.from + " -> I" + transition.to
+                    + " [label=\"" + dotEscape(transition.symbol) + "\"];");
+        }
+
+        lines.add("}");
         return lines;
     }
 
@@ -281,6 +306,21 @@ public class MiniSlrDemo {
         return builder.toString();
     }
 
+    private String dotStateLabel(int index, Set<Item> state) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("I").append(index);
+        for (Item item : state) {
+            builder.append("\\n").append(dotEscape(item.toString()));
+        }
+        return builder.toString();
+    }
+
+    private String dotEscape(String value) {
+        return value
+                .replace("\\", "\\\\")
+                .replace("\"", "\\\"");
+    }
+
     private static final class Production {
         final int index;
         final String lhs;
@@ -392,4 +432,3 @@ public class MiniSlrDemo {
         }
     }
 }
-

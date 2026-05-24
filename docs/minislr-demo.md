@@ -37,6 +37,18 @@ The program prints:
 - GOTO transitions between item-set states;
 - a state-indexed ACTION/GOTO analysis table.
 
+Run:
+
+```sh
+java -cp build/classes MiniSlrDemo --dot
+```
+
+The DOT mode prints the LR(0) state automaton:
+
+- each node is an item-set state `I0`, `I1`, ...;
+- the node label contains all LR(0) items in that state;
+- each edge is a GOTO transition labelled by the grammar symbol.
+
 ACTION cells use standard compact notation:
 
 - `sN`: shift and go to state `N`;

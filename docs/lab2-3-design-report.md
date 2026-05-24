@@ -78,7 +78,7 @@ Source
 | `src/TacOptimizer.java` | AST 层常量折叠优化器。 |
 | `src/CodeGenerator.java` | 临时变量、标号和 TAC 输出格式管理。 |
 | `src/Experiment2.java` | 命令行入口：`--tac`、`--tac-opt`、`--ast`、`--ast-dot`、`--tree`。 |
-| `src/MiniSlrDemo.java` | 固定表达式文法的 MiniYacc/SLR 原理展示，输出 item 集和 ACTION/GOTO 表。 |
+| `src/MiniSlrDemo.java` | 固定表达式文法的 MiniYacc/SLR 原理展示，输出 item 集、ACTION/GOTO 表和 LR(0) 自动机 DOT。 |
 | `Makefile` | 自动运行 Bison 并编译 Java 源码。 |
 
 ## 5. Bison 文法设计
@@ -368,7 +368,7 @@ z = t1
 java -cp build/classes MiniSlrDemo
 ```
 
-输出内容：
+默认输出内容：
 
 - 编号产生式；
 - 规范 LR(0) 项目集族；
@@ -377,7 +377,15 @@ java -cp build/classes MiniSlrDemo
 
 ACTION 表中 `sN` 表示移进到状态 `N`，`rK` 表示按第 `K` 条产生式归约，`acc` 表示接受。GOTO 表给出非终结符 `E/T/F` 的状态转移。
 
-测试：`minislr_table.*`
+DOT 输出命令：
+
+```sh
+java -cp build/classes MiniSlrDemo --dot
+```
+
+DOT 模式输出 LR(0) 状态自动机：节点是项目集状态 `I0/I1/...`，边是带文法符号标签的 GOTO 转移。
+
+测试：`minislr_table.*`、`minislr_dot.*`
 
 ## 9. 构建与运行
 
@@ -415,6 +423,12 @@ java -cp build/classes Experiment2 --ast-dot < tests/lab3_ast_dot_sample.in
 
 ```sh
 java -cp build/classes MiniSlrDemo
+```
+
+运行 MiniYacc/SLR DOT 展示：
+
+```sh
+java -cp build/classes MiniSlrDemo --dot
 ```
 
 默认模式：
@@ -456,12 +470,13 @@ make test
 | `lab3_ast_dot_sample` | AST 的 Graphviz DOT 输出 |
 | `lab3_tac_constant_folding` | `--tac-opt` 常量折叠 |
 | `minislr_table` | MiniYacc/SLR 的 item 集、GOTO 转移和 ACTION/GOTO 表 |
+| `minislr_dot` | MiniYacc/SLR 的 LR(0) 状态自动机 DOT 输出 |
 
 最近一次验证结果：
 
 ```text
 make test
-全部 19 个 fixture 通过
+全部 20 个 fixture 通过
 ```
 
 ## 11. 设计取舍
@@ -506,4 +521,4 @@ make test
 Lexer -> Bison-generated parser -> AST -> TacEmitter -> CodeGenerator -> TAC
 ```
 
-它覆盖实验指导书基本要求，并完成了全部关系运算、复合语句、dangling else、语句级错误恢复、AST 文本展示、AST DOT 展示、常量折叠和 MiniYacc/SLR 分析表展示等扩展。核心目标“通过 Bison 完成 parser 并实现实验三地址代码生成”已经达成。
+它覆盖实验指导书基本要求，并完成了全部关系运算、复合语句、dangling else、语句级错误恢复、AST 文本展示、AST DOT 展示、常量折叠、MiniYacc/SLR 分析表展示和 LR(0) 状态自动机 DOT 输出等扩展。核心目标“通过 Bison 完成 parser 并实现实验三地址代码生成”已经达成。
