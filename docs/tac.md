@@ -31,5 +31,6 @@ implementation and tests.
 - Expression precedence is tracked by `tests/lab3_tac_precedence.*`.
 - Nested `while` and `if/else` control flow is tracked by
   `tests/lab3_tac_nested_control.*`.
+- Syntax and invalid-token recovery are tracked by `tests/lab3_tac_error_*`.
 - Constant folding is tracked by `tests/lab3_tac_constant_folding.*`.
 - These fixtures run in the default `make test` suite.

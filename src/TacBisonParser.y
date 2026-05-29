@@ -45,8 +45,12 @@ import java.util.List;
         return statements;
     }
 
-    private static RuntimeException syntaxError(String message) {
-        return new RuntimeException(message);
+    private static boolean isInvalidExpr(Object value) {
+        return value instanceof TacInvalidExpr;
+    }
+
+    private static boolean hasInvalidExpr(TacCondition condition) {
+        return condition.left instanceof TacInvalidExpr || condition.right instanceof TacInvalidExpr;
     }
 }
 
@@ -54,7 +58,7 @@ import java.util.List;
  • 标识符（IDN）、十进制整数（DEC）、八进制整数（OCT）、十六进制整数（HEX）。
  • 关键字：IF、THEN、ELSE、WHILE、DO、BEGIN、END。
  • 运算符和分隔符：+（ADD）、-（SUB）、*（MUL）、/（DIV）、=（赋予
-   EQ）、>（GT）、<（LT）、>=（GE）、<=（LE）、!=（NEQ）、(（SLP）、)（SRP）、;（SEMI）。
+   EQ）、>（GT）、<（LT）、>=（GE）、<=（LE）、<>（NEQ）、(（SLP）、)（SRP）、;（SEMI）。
  • 错误
    token：ILOCT（非法八进制）、ILHEX（非法十六进制）、ILNUM（非法数字）、UNKNOWN（无法识别的字符）——它们被
    用来触发语法错误。*/
@@ -100,7 +104,7 @@ opt_semi
 statement
     : IDN EQ expr
       {
-          $$ = new TacAssign(tokenValue($1), (TacExpr) $3);
+          $$ = isInvalidExpr($3) ? new TacError() : new TacAssign(tokenValue($1), (TacExpr) $3);
       }
     | error
       {
@@ -108,15 +112,18 @@ statement
       }
     | IF condition THEN statement %prec THEN
       {
-          $$ = new TacIf((TacCondition) $2, (TacStatement) $4, null);
+          TacCondition condition = (TacCondition) $2;
+          $$ = hasInvalidExpr(condition) ? new TacError() : new TacIf(condition, (TacStatement) $4, null);
       }
     | IF condition THEN statement ELSE statement
       {
-          $$ = new TacIf((TacCondition) $2, (TacStatement) $4, (TacStatement) $6);
+          TacCondition condition = (TacCondition) $2;
+          $$ = hasInvalidExpr(condition) ? new TacError() : new TacIf(condition, (TacStatement) $4, (TacStatement) $6);
       }
     | WHILE condition DO statement
       {
-          $$ = new TacWhile((TacCondition) $2, (TacStatement) $4);
+          TacCondition condition = (TacCondition) $2;
+          $$ = hasInvalidExpr(condition) ? new TacError() : new TacWhile(condition, (TacStatement) $4);
       }
     | BEGIN compound_statements END
       {
@@ -176,19 +183,27 @@ relop
 expr
     : expr ADD expr
       {
-          $$ = new TacBinary((TacExpr) $1, tokenValue($2), (TacExpr) $3);
+          $$ = isInvalidExpr($1) || isInvalidExpr($3)
+              ? new TacInvalidExpr()
+              : new TacBinary((TacExpr) $1, tokenValue($2), (TacExpr) $3);
       }
     | expr SUB expr
       {
-          $$ = new TacBinary((TacExpr) $1, tokenValue($2), (TacExpr) $3);
+          $$ = isInvalidExpr($1) || isInvalidExpr($3)
+              ? new TacInvalidExpr()
+              : new TacBinary((TacExpr) $1, tokenValue($2), (TacExpr) $3);
       }
     | expr MUL expr
       {
-          $$ = new TacBinary((TacExpr) $1, tokenValue($2), (TacExpr) $3);
+          $$ = isInvalidExpr($1) || isInvalidExpr($3)
+              ? new TacInvalidExpr()
+              : new TacBinary((TacExpr) $1, tokenValue($2), (TacExpr) $3);
       }
     | expr DIV expr
       {
-          $$ = new TacBinary((TacExpr) $1, tokenValue($2), (TacExpr) $3);
+          $$ = isInvalidExpr($1) || isInvalidExpr($3)
+              ? new TacInvalidExpr()
+              : new TacBinary((TacExpr) $1, tokenValue($2), (TacExpr) $3);
       }
     | SLP expr SRP
       {
@@ -219,19 +234,23 @@ factor
       }
     | ILOCT
       {
-          throw syntaxError("非法八进制整数: " + tokenLexeme($1));
+          yyerror("非法八进制整数: " + tokenLexeme($1));
+          $$ = new TacInvalidExpr();
       }
     | ILHEX
       {
-          throw syntaxError("非法十六进制整数: " + tokenLexeme($1));
+          yyerror("非法十六进制整数: " + tokenLexeme($1));
+          $$ = new TacInvalidExpr();
       }
     | ILNUM
       {
-          throw syntaxError("非法整数: " + tokenLexeme($1));
+          yyerror("非法整数: " + tokenLexeme($1));
+          $$ = new TacInvalidExpr();
       }
     | UNKNOWN
       {
-          throw syntaxError("无法识别的字符: '" + tokenLexeme($1) + "'");
+          yyerror("无法识别的字符: '" + tokenLexeme($1) + "'");
+          $$ = new TacInvalidExpr();
       }
     ;
 

@@ -32,7 +32,7 @@
 | --- | --- |
 | 支持更丰富语言现象 | 已覆盖全部关系运算 `> < = >= <= <>`，复合语句 `begin ... end`，嵌套控制流。 |
 | 错误定位 | 已覆盖。错误信息包含行列位置和当前 token。 |
-| 续编译 | 部分覆盖。语句级错误恢复会跳过错误语句，并继续翻译后续合法语句。 |
+| 续编译 | 已覆盖语句级恢复。语法错误和非法 token 会跳过错误语句，并继续翻译后续合法语句。 |
 | 简单纠错 | 当前不做自动改写，只做语句级恢复。 |
 | 中间代码优化 | 已扩展 `--tac-opt` 常量折叠模式，默认 TAC 输出保持不变。 |
 | 自己做一个 YACC | 部分覆盖。主线采用 GNU Bison；另有 `MiniSlrDemo` 对固定表达式文法输出 LR(0) item 集、GOTO 转移和 ACTION/GOTO 表。 |
@@ -277,7 +277,8 @@ Bison 通过 `%prec THEN` 和 `%nonassoc ELSE` 处理 dangling else，使 `else`
 
 - 以语句为恢复单位；
 - 分号、`end` 和 EOF 作为主要同步点；
-- 错误语句构造成 `TacError`；
+- 非法八进制、非法十六进制、非法数字和未知字符在 factor 层记录错误；
+- Bison 语法错误、非法表达式或非法条件对应的语句构造成 `TacError`；
 - `TacEmitter` 跳过 `TacError`；
 - 后续合法语句继续翻译。
 
@@ -304,6 +305,8 @@ y = t1
 - `lab3_tac_error_missing_then.*`：`if` 语句缺 `then`；
 - `lab3_tac_error_compound_recovery.*`：复合语句内部错误后继续块内和块外翻译；
 - `lab3_tac_error_multiple.*`：连续多个错误语句后继续翻译合法语句。
+- `lab3_tac_error_invalid_lexemes.*`：赋值表达式中的非法八进制、非法十六进制、非法数字和未知字符；
+- `lab3_tac_error_invalid_condition.*`：条件和循环谓词中的非法数值。
 
 ### 8.5 AST 展示
 
@@ -466,6 +469,8 @@ make test
 | `lab3_tac_error_missing_then` | 缺 `then` 后的语句级恢复 |
 | `lab3_tac_error_compound_recovery` | 复合语句内部错误恢复 |
 | `lab3_tac_error_multiple` | 连续多个错误的收集与恢复 |
+| `lab3_tac_error_invalid_lexemes` | 赋值表达式中的非法 token 定位与恢复 |
+| `lab3_tac_error_invalid_condition` | 条件和循环谓词中的非法 token 定位与恢复 |
 | `lab3_ast_sample` | Bison 路径 AST 展示 |
 | `lab3_ast_dot_sample` | AST 的 Graphviz DOT 输出 |
 | `lab3_tac_constant_folding` | `--tac-opt` 常量折叠 |
@@ -476,7 +481,7 @@ make test
 
 ```text
 make test
-全部 20 个 fixture 通过
+全部 22 个 fixture 通过
 ```
 
 ## 11. 设计取舍
@@ -495,7 +500,7 @@ make test
 
 ### 11.4 错误恢复边界
 
-当前错误恢复是语句级恢复，不做复杂自动纠错。这样能满足“定位 + 续编译”的核心展示，同时避免错误恢复逻辑影响正确程序的 TAC 生成。
+当前错误恢复是语句级恢复，不做复杂自动纠错。Bison 语法错误和 lexer 产生的非法 token 都会定位到具体行列，错误语句不生成 TAC，后续合法语句继续翻译。这样能满足“定位 + 续编译”的核心展示，同时避免错误恢复逻辑影响正确程序的 TAC 生成。
 
 ## 12. 当前限制与后续方向
 
@@ -509,7 +514,7 @@ make test
 
 可选后续扩展：
 
-- 更完整的 Bison 错误恢复；
+- 表达式内部更细粒度的错误恢复与自动纠错；
 - 布尔表达式 `and/or/not` 与短路 TAC；
 - MiniYacc 后续可扩展为读取外部文法并展示移进归约过程。
 
@@ -521,4 +526,4 @@ make test
 Lexer -> Bison-generated parser -> AST -> TacEmitter -> CodeGenerator -> TAC
 ```
 
-它覆盖实验指导书基本要求，并完成了全部关系运算、复合语句、dangling else、语句级错误恢复、AST 文本展示、AST DOT 展示、常量折叠、MiniYacc/SLR 分析表展示和 LR(0) 状态自动机 DOT 输出等扩展。核心目标“通过 Bison 完成 parser 并实现实验三地址代码生成”已经达成。
+它覆盖实验指导书基本要求，并完成了全部关系运算、复合语句、dangling else、语句级错误恢复、非法 token 恢复、AST 文本展示、AST DOT 展示、常量折叠、MiniYacc/SLR 分析表展示和 LR(0) 状态自动机 DOT 输出等扩展。核心目标“通过 Bison 完成 parser 并实现实验三地址代码生成”已经达成。

@@ -57,7 +57,9 @@ README files define the local purpose and conventions for that subtree.
 - `Lexer.java` and `Token.java` are shared across lab 1, lab 2, and lab 3.
 - The default `make test` suite covers the lab 1 sample, shared lexer contract,
   lab 2 syntax-tree output and invalid-octal error handling, plus lab 3 TAC
-  samples for material output, expression precedence, and nested control flow.
+  samples for material output, expression precedence, nested control flow,
+  language extensions, error recovery, AST display, constant folding, and the
+  MiniYacc/SLR demo.
 
 ## Open Loops
 

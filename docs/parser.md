@@ -50,9 +50,9 @@ because the shared lexer exposes those tokens.
 
 ## Error Behavior
 
-Parser errors throw `RuntimeException` internally and are printed by the
-`Experiment2` command-line entry point. The message includes the expected shape
-and the active token when available.
+Lab 2 tree-mode parser errors are printed by the `Experiment2` command-line
+entry point. The message includes the expected shape and the active token when
+available.
 
 Lab 3 syntax is recognized by the Bison-generated parser. The generated parser
 builds a small AST, and `TacEmitter` traverses that AST with the existing
@@ -60,6 +60,11 @@ builds a small AST, and `TacEmitter` traverses that AST with the existing
 the lab 3 fixtures. `TacAstPrinter` can print that AST for report and
 presentation use without changing default TAC output; `TacAstDotPrinter` can
 emit the same tree as Graphviz DOT text.
+
+In Lab 3 TAC mode, Bison syntax errors and lexer-produced invalid tokens are
+reported with line/column information. Invalid statements become `TacError`
+nodes and are skipped by `TacEmitter`, so later valid statements can still emit
+TAC.
 
 ## Test Coverage
 
@@ -71,6 +76,9 @@ emit the same tree as Graphviz DOT text.
   parenthesized expression parsing through TAC output.
 - `tests/lab3_tac_nested_control.*` protects nested `while` and `if/else`
   parsing through TAC output.
+- `tests/lab3_tac_error_invalid_lexemes.*` and
+  `tests/lab3_tac_error_invalid_condition.*` protect invalid numeric and
+  unknown-token recovery in the Bison TAC path.
 - `tests/lab3_ast_sample.*` protects Bison-path AST display.
 - `tests/lab3_ast_dot_sample.*` protects Graphviz DOT AST display.
 - Add focused fixtures before changing grammar acceptance, error messages, or

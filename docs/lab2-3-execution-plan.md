@@ -38,7 +38,7 @@ Lexer -> Bison Parser -> AST -> TacEmitter -> CodeGenerator -> TAC
 | TAC 优化 | `Experiment2 --tac-opt` 输出常量折叠后的 TAC |
 | MiniYacc 展示 | `MiniSlrDemo` 输出固定表达式文法的 LR(0) item 集、GOTO 转移、ACTION/GOTO 表和状态自动机 DOT |
 | 构建 | `make build` 自动生成 Bison parser 并编译 |
-| 测试 | 指导书样例、表达式优先级、嵌套控制流、扩展关系运算、复合语句、dangling else、错误恢复细分场景、AST 展示、AST DOT 展示、常量折叠、SLR 表展示、SLR DOT 展示 |
+| 测试 | 指导书样例、表达式优先级、嵌套控制流、扩展关系运算、复合语句、dangling else、错误恢复细分场景、非法 token 恢复、AST 展示、AST DOT 展示、常量折叠、SLR 表展示、SLR DOT 展示 |
 
 当前缺口：
 
@@ -149,10 +149,13 @@ y = b * c;
 - `tests/lab3_tac_error_missing_then.*`
 - `tests/lab3_tac_error_compound_recovery.*`
 - `tests/lab3_tac_error_multiple.*`
+- `tests/lab3_tac_error_invalid_lexemes.*`
+- `tests/lab3_tac_error_invalid_condition.*`
 
 完成标准：
 
 - 错误样例已能报告位置。
+- 非法八进制、非法十六进制、非法数字和未知 token 已能报告位置并恢复。
 - 后续合法语句 TAC 正常输出。
 - `make test` 已全部通过。
 - 设计报告已增加“错误恢复设计与效果”。
@@ -360,6 +363,7 @@ Status: done as standalone demo.
 - [x] B3 `TacEmitter` 跳过错误节点。
 - [x] B4 新增错误恢复 fixture 并通过 `make test`。
 - [x] B5 补充缺右括号、缺 `then`、块内错误和多错误恢复 fixture。
+- [x] B6 补充非法 token 在赋值与条件上下文中的恢复 fixture。
 - [x] C1 新增 `TacAstPrinter`。
 - [x] C2 增加 `Experiment2 --ast`。
 - [x] C3 新增 AST fixture 并通过 `make test`。

@@ -38,6 +38,10 @@ Directory entry point for project test cases and expected outputs.
   inside `begin ... end`, followed by later block and top-level TAC.
 - `lab3_tac_error_multiple.*`: collection of multiple syntax errors before
   continuing with the next valid statement.
+- `lab3_tac_error_invalid_lexemes.*`: recovery from invalid octal,
+  hexadecimal, numeric, and unknown tokens in assignment expressions.
+- `lab3_tac_error_invalid_condition.*`: recovery from invalid literals in
+  conditional and loop predicates.
 - `lab3_ast_sample.*`: AST text output for the Bison parser path used by lab 3.
 - `lab3_ast_dot_sample.*`: Graphviz DOT AST output for report and presentation
   diagrams.

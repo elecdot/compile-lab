@@ -59,6 +59,9 @@ final class TacError extends TacStatement {
 abstract class TacExpr {
 }
 
+final class TacInvalidExpr extends TacExpr {
+}
+
 final class TacValue extends TacExpr {
     final String place;
 
