@@ -1,0 +1,8 @@
+L1: if a < b goto L2
+goto L0
+L2: t1 := x + 1
+x = t1
+t2 = y * 2
+y = t2
+goto L1
+L0:

@@ -1,0 +1,9 @@
+DEC 0
+DEC 92
+ADD -
+IDN data
+GE -
+HEX 31
+ILOCT -
+SEMI -
+WHILE -

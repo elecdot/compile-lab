@@ -1,0 +1,14 @@
+Program
+  While
+    Condition <
+      Value a
+      Value b
+    Compound
+      Assign x
+        Binary +
+          Value x
+          Value 1
+      Assign y
+        Binary *
+          Value y
+          Value 2

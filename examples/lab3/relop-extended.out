@@ -1,0 +1,10 @@
+if a >= b goto L1
+goto L0
+L1: x = 1
+L0: if a <= b goto L3
+goto L2
+L3: y = 2
+L2: if a <> b goto L5
+goto L4
+L5: z = 3
+L4:

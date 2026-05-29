@@ -1,0 +1,8 @@
+if a > 0 goto L1
+goto L0
+L1: if b > 0 goto L2
+goto L3
+L2: x = 1
+goto L0
+L3: x = 2
+L0:
