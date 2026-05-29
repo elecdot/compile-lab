@@ -50,6 +50,14 @@ import java.util.List;
     }
 }
 
+/*
+ • 标识符（IDN）、十进制整数（DEC）、八进制整数（OCT）、十六进制整数（HEX）。
+ • 关键字：IF、THEN、ELSE、WHILE、DO、BEGIN、END。
+ • 运算符和分隔符：+（ADD）、-（SUB）、*（MUL）、/（DIV）、=（赋予
+   EQ）、>（GT）、<（LT）、>=（GE）、<=（LE）、!=（NEQ）、(（SLP）、)（SRP）、;（SEMI）。
+ • 错误
+   token：ILOCT（非法八进制）、ILHEX（非法十六进制）、ILNUM（非法数字）、UNKNOWN（无法识别的字符）——它们被
+   用来触发语法错误。*/
 %token IDN DEC OCT HEX
 %token IF THEN ELSE WHILE DO BEGIN END
 %token ADD SUB MUL DIV EQ GT LT GE LE NEQ SLP SRP SEMI
@@ -82,12 +90,13 @@ top_statements
       }
     ;
 
-// 允许程序末尾有一个可选的分号，方便用户习惯
+// 允许程序**末尾**(只有末尾)有一个可选的分号，方便用户习惯
 opt_semi
     : %empty
     | SEMI
     ;
 
+// S
 statement
     : IDN EQ expr
       {
@@ -115,6 +124,7 @@ statement
       }
     ;
 
+// L
 compound_statements
     : statement SEMI
       {
@@ -126,6 +136,7 @@ compound_statements
       }
     ;
 
+// C
 condition
     : expr relop expr
       {
@@ -133,6 +144,7 @@ condition
       }
     ;
 
+// 关系运算符
 relop
     : GT
       {
@@ -160,6 +172,7 @@ relop
       }
     ;
 
+// E
 expr
     : expr ADD expr
       {
