@@ -58,26 +58,5 @@ Use `java -jar dist/compiler-lab.jar help` for all supported commands.
 
 ## Current State
 
-- Java is the implementation language for the current lab entries.
-- `CompilerLab.java` is the executable jar entry point.
-- `Main.java` is the lab 1 lexer-output entry point.
-- `Experiment2.java` is the lab 2 and lab 3 entry point: `--tree` emits the
-  syntax tree, and `--tac` emits three-address code.
-- `Parser.java` contains the parser interface and recursive-descent
-  implementation used by lab 2 syntax-tree output.
-- `src/TacBisonParser.y` is the Bison grammar used to generate the lab 3 TAC
-  parser during `make build`.
-- `Lexer.java` and `Token.java` are shared across lab 1, lab 2, and lab 3.
-- The default `make test` suite covers the lab 1 sample, shared lexer contract,
-  lab 2 syntax-tree output and invalid-octal error handling, plus lab 3 TAC
-  samples for material output, expression precedence, nested control flow,
-  language extensions, error recovery, AST display, constant folding, the
-  MiniYacc/SLR demo, and executable-jar smoke coverage.
 
 ## Open Loops
-
-- [ ] Separate TAC generation policy from parser traversal behind the expanded
-  fixture suite.
-- [ ] Add focused parser fixtures for additional syntax errors before changing
-  grammar acceptance or diagnostics.
-- [ ] Keep `docs/` aligned with the source as the lab report takes shape.
