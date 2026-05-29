@@ -12,19 +12,19 @@
 | 可执行程序 | `dist/compiler-lab.jar` |
 | 构建命令 | `make build`、`make dist` |
 | 测试命令 | `make test` |
-| 最近验证 | 2026-05-29，`make test` 通过 |
+| 验证结果 | 2026-05-29 执行 `date && make test` 通过 |
 
 ## 2. 实验任务分工
 
-本组按照实验亦前端处理流程分工。三位成员均参与总体设计与联调，具体分工如下。
+本组按照实验任务划分，亦即编译器前端处理流程分工。三位成员均参与总体设计与联调，具体分工如下。
 
 | 成员 | 学号 | 主要分工 | 主要技术内容 |
 | --- | --- | --- | --- |
 | 郑天白 | 23070202 | 词法分析子系统 | 输入处理、Token 识别、正规式、正规文法、状态图、词法测试 |
 | 段晰迈 | 23070201 | 递归下降语法分析子系统 | 消除左递归、递归下降子程序、语法图、语法树输出、错误处理扩展 |
-| 高子涵 | 23070207 | Bison 语法分析与三地址代码生成 | Bison 文法、AST、TAC 生成、错误恢复、扩展功能、测试、可执行程序 |
+| 高子涵 | 23070207 | Bison 语法分析与三地址代码生成 | Bison 文法、MiniYacc/SLR demo 程序、AST、TAC 生成、错误恢复、扩展功能、测试、可执行程序 |
 
-最终报告按编译器前端流程统一组织，将词法分析、递归下降语法分析、Bison 语法分析、MiniYacc/SLR 原理展示和三地址代码生成放入同一条技术主线中说明。Lab 1 与 Lab 2 已完成的正规式、正规文法、语法图、测试用例和扩展说明在对应子系统中直接呈现，并按当前实现口径补充必要说明。
+报告按编译器前端流程统一组织，将词法分析、递归下降语法分析、Bison 语法分析、MiniYacc/SLR 原理展示和三地址代码生成放入同一条技术主线中说明。
 
 ## 3. 实验要求完成情况
 
@@ -55,7 +55,7 @@
 7. 非法八进制整数；
 8. 非法十六进制整数。
 
-本组词法分析程序采用手工实现方式，没有使用 Lex/Flex。程序先读取完整标准输入，再逐个扫描 token。当前项目中 `src/Lexer.java` 与 `src/Token.java` 是 Lab 1、Lab 2、Lab 3 共用的词法实现。
+本组词法分析程序采用手工实现方式，没有使用 Lex/Flex。程序先读取完整标准输入，再逐个扫描 token。`src/Lexer.java` 与 `src/Token.java` 是 Lab 1、Lab 2、Lab 3 共用的词法实现。
 
 ### 4.2 字符集与正规式
 
@@ -588,7 +588,7 @@ statement -> IF condition THEN statement %prec THEN
 statement -> IF condition THEN statement ELSE statement
 ```
 
-该设计使 `else` 绑定到最近的未匹配 `if`。
+该设计使 `else` 绑定到最邻近的未匹配 `if`。
 
 #### 5.2.3 Bison parser 总体结构
 
@@ -683,7 +683,7 @@ ok = 1
 
 #### 5.3.1 设计定位
 
-实验指导书扩展项中提到“自己做一个 YACC”。本项目没有用自制 YACC 替代 Lab 3 主线 Bison parser，而是实现了固定表达式文法的 MiniYacc/SLR 原理展示，用于说明 LR 分析表构造的关键步骤。
+实验指导书扩展项中提到“自己做一个 YACC”。本实现不以自制 YACC 替代 Lab 3 主线 Bison parser，而是提供固定表达式文法的 MiniYacc/SLR 原理展示，用于展示课上学习的 LR 分析表构造的关键步骤。
 
 固定文法：
 
@@ -1012,10 +1012,14 @@ z = t1
 测试命令：
 
 ```sh
-make test
+date && make test
 ```
 
-通过结果节选：
+成功截图如下。
+
+![date && make test 成功截图](assets/make-test-success.png)
+
+通过结果：
 
 ```text
 ok lab1_sample
@@ -1095,11 +1099,3 @@ java -jar dist/compiler-lab.jar minislr
 高子涵负责 Bison 路径和三地址代码生成部分。Bison 自动生成 parser 适合处理表达式优先级、dangling else 和错误恢复等语法问题；AST 中间表示使语法分析和语法制导翻译解耦，便于输出 AST、生成 TAC 和做常量折叠。MiniYacc/SLR 展示则帮助理解自动生成工具背后的 LR 项目集、GOTO 转移和 ACTION/GOTO 表构造过程。
 
 全组联调过程中，测试用例和可执行程序非常重要。`make test` 将基本样例、扩展语法、错误恢复和可执行 JAR 都纳入验证，能够避免报告中的结论停留在文字描述层面。
-
-## 附录：最终提交检查
-
-- [ ] 报告导出为最终提交格式；
-- [ ] `make test` 通过；
-- [ ] `make dist` 生成 `dist/compiler-lab.jar`；
-- [ ] 提交包包含实验报告、源程序、可执行程序；
-- [ ] 不提交 `build/`、`.cache/` 等临时产物。
