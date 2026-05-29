@@ -28,17 +28,17 @@
 
 **按照实验指导书要求输入后，输出与预期一致，完成了词法分析问题**
 
-<img src="./media/image1.png" style="width:3.03167in;height:4.20892in" />
+<img src="lab1-media/media/image1.png" style="width:3.03167in;height:4.20892in" />
 
 三、额外功能
 
 编译器并不是在用户每输入一个字符时立即进行词法分析和语法分析，而是先将用户输入的内容暂存在输入缓冲区中，允许用户在按下 Enter 键之前对当前输入行进行修改。只有当用户最终按下 Enter 键后，编译器才会将当前缓冲区中的完整内容作为最终源程序输入，交给后续的词法分析、语法分析和中间代码生成模块处理。
 
-下面为设计验证，先是输入0x1f后，在enter之前修改输入在0x和1f中间加入空格，<img src="./media/image2.png" style="width:1.30226in;height:1.41686in" />结果如图，分别是两个非法
+下面为设计验证，先是输入0x1f后，在enter之前修改输入在0x和1f中间加入空格，<img src="lab1-media/media/image2.png" style="width:1.30226in;height:1.41686in" />结果如图，分别是两个非法
 
 下面是在enter之后修改0x1f的输入，修改无效
 
-<img src="./media/image3.png" style="width:1.05223in;height:0.98972in" />
+<img src="lab1-media/media/image3.png" style="width:1.05223in;height:0.98972in" />
 
 **词法分析子系统**
 
@@ -161,7 +161,7 @@ KEYWORD = if\|then\|else\|while\|do\|begin\|end
 | 非法八进制数   | ILOCT             | \-         |
 | 非法十六进制数 | ILHEX             | \-         |
 
-<img src="./media/image4.png" style="width:4.30417in;height:9.69306in" />
+<img src="lab1-media/media/image4.png" style="width:4.30417in;height:9.69306in" />
 
 **2. 变换后的正规文法**
 

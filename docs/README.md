@@ -18,6 +18,8 @@ and final lab report.
   three-address-code generation design.
 - [Lab 2/3 execution plan](lab2-3-execution-plan.md): authoritative plan for
   remaining extensions, final report work, and presentation preparation.
+- [Report workspace](reports/README.md): final report integration area,
+  including group-member sources and the Bison/Lab 3 report path.
 
 ## Plan
 
