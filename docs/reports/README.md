@@ -8,6 +8,8 @@ with the Bison path and Lab 3 implementation report.
 
 ## Files
 
+- [final-report.md](final-report.md): working skeleton for the final
+  consolidated report.
 - [member-sources/](member-sources/): group-member report and implementation
   source material, including the converted Lab 1 and Lab 2 manuals.
 
