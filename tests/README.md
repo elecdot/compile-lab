@@ -9,6 +9,7 @@ Directory entry point for project test cases and expected outputs.
 - Lab 2 syntax-tree fixtures.
 - Lab 3 three-address-code fixtures.
 - MiniYacc/SLR analysis-table demonstration fixtures.
+- Executable-jar smoke coverage for representative lab modes.
 
 ## Fixtures
 
@@ -55,6 +56,8 @@ Directory entry point for project test cases and expected outputs.
 ## Local Conventions
 
 - Run the characterization suite through `make test`.
+- `make test` also builds `dist/compiler-lab.jar` and runs smoke checks through
+  `java -jar` so the submission executable stays valid.
 - Keep lexer contract fixtures broad enough to protect every lab entry point
   that uses the shared scanner.
 - Keep test fixtures small and focused.

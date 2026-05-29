@@ -18,7 +18,9 @@ the automated `make test` suite.
 
 ## Demo Catalog
 
-Run `make build` before executing the Java commands below.
+Run `make dist` before executing the Java commands below. The classpath commands
+remain useful during development; the executable jar commands are the preferred
+submission-facing form.
 
 | Purpose | Input | Output | Command |
 | --- | --- | --- | --- |
@@ -35,6 +37,16 @@ Run `make build` before executing the Java commands below.
 | Constant-folded TAC | `lab3/constant-folding.in` | `lab3/constant-folding.out` | `java -cp build/classes Experiment2 --tac-opt < examples/lab3/constant-folding.in` |
 | MiniYacc SLR table | none | `minislr/table.out` | `java -cp build/classes MiniSlrDemo` |
 | MiniYacc LR(0) automaton DOT | none | `minislr/automaton-dot.out` | `java -cp build/classes MiniSlrDemo --dot` |
+
+Equivalent executable jar examples:
+
+```sh
+java -jar dist/compiler-lab.jar lab1 < examples/lab1/handout.in
+java -jar dist/compiler-lab.jar tree < examples/lab2/tree-sample.in
+java -jar dist/compiler-lab.jar tac < examples/lab3/handout-tac.in
+java -jar dist/compiler-lab.jar tac-opt < examples/lab3/constant-folding.in
+java -jar dist/compiler-lab.jar minislr
+```
 
 ## Report Usage
 

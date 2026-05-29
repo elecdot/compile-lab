@@ -14,6 +14,9 @@ Directory entry point for implementation source code.
 
 ## Entry Points
 
+- `CompilerLab.java`: executable jar entry point. `make dist` packages it as
+  `dist/compiler-lab.jar`, with subcommands for lab 1, lab 2 tree output,
+  lab 3 TAC/AST modes, and MiniYacc/SLR demos.
 - `Main.java`: lab 1 lexer output entry point using the shared lexer.
 - `Experiment2.java`: lab 2 and lab 3 command-line entry point. Use `--tree`
   for syntax-tree output, `--tac` for three-address-code output, `--tac-opt`
@@ -39,6 +42,8 @@ Directory entry point for implementation source code.
 ## Local Conventions
 
 - Keep source files organized by compiler subsystem.
+- Keep `CompilerLab` as a thin command dispatcher; implementation behavior
+  should remain in the lab-specific entry points and helper classes.
 - Prefer clear module boundaries over large catch-all files.
 - Treat `Lexer` and `Token` as shared interfaces across lab entries; update
   shared lexer fixtures before changing their behavior.

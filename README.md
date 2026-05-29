@@ -30,23 +30,36 @@ README files define the local purpose and conventions for that subtree.
 - Put directory-specific rules in that directory's README.
 - Use `Makefile` as the project command entry point for build, test, run, and
   cleanup workflows.
-- Prefer `make build`, `make test`, and `make clean` over direct compiler or
-  script commands when documenting workflows.
+- Prefer `make build`, `make dist`, `make test`, and `make clean` over direct
+  compiler or script commands when documenting workflows.
 - Keep generated files out of Git unless they are required deliverables.
 
 ## Commands
 
 - `make build`: generate the lab 3 parser with Bison, then compile all Java
   sources into `build/classes`.
+- `make dist`: build `dist/compiler-lab.jar`, the executable submission
+  artifact.
 - `make test`: build and run the checked fixture suite.
 - `make clean`: remove generated build artifacts.
 
-`make build` requires GNU Bison and a JDK on `PATH`; override them with
-`BISON=...` or `JAVAC=...` when needed.
+`make build` and `make dist` require GNU Bison and a JDK on `PATH`; override
+them with `BISON=...`, `JAVAC=...`, or `JAR=...` when needed.
+
+Run the executable jar after `make dist`:
+
+```sh
+java -jar dist/compiler-lab.jar lab1 < examples/lab1/handout.in
+java -jar dist/compiler-lab.jar tree < examples/lab2/tree-sample.in
+java -jar dist/compiler-lab.jar tac < examples/lab3/handout-tac.in
+```
+
+Use `java -jar dist/compiler-lab.jar help` for all supported commands.
 
 ## Current State
 
 - Java is the implementation language for the current lab entries.
+- `CompilerLab.java` is the executable jar entry point.
 - `Main.java` is the lab 1 lexer-output entry point.
 - `Experiment2.java` is the lab 2 and lab 3 entry point: `--tree` emits the
   syntax tree, and `--tac` emits three-address code.
@@ -58,8 +71,8 @@ README files define the local purpose and conventions for that subtree.
 - The default `make test` suite covers the lab 1 sample, shared lexer contract,
   lab 2 syntax-tree output and invalid-octal error handling, plus lab 3 TAC
   samples for material output, expression precedence, nested control flow,
-  language extensions, error recovery, AST display, constant folding, and the
-  MiniYacc/SLR demo.
+  language extensions, error recovery, AST display, constant folding, the
+  MiniYacc/SLR demo, and executable-jar smoke coverage.
 
 ## Open Loops
 

@@ -12,8 +12,9 @@ Use this directory for repeatable project workflows.
 
 ## Files
 
-- `run_tests.sh`: executes the checked fixture suite after `make build` has
-  produced `build/classes`.
+- `run_tests.sh`: executes the checked fixture suite after `make test` has
+  produced `build/classes` and `dist/compiler-lab.jar`. It verifies both direct
+  class entry points and representative executable-jar commands.
 
 ## Local Conventions
 
