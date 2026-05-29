@@ -2,6 +2,14 @@
 
 Repository for compiler-principles lab work.
 
+Env:
+```bash
+$ java -version
+openjdk version "17.0.8" 2023-07-18
+OpenJDK Runtime Environment Temurin-17.0.8+7 (build 17.0.8+7)
+OpenJDK 64-Bit Server VM Temurin-17.0.8+7 (build 17.0.8+7, mixed mode, sharing)
+```
+
 ## Documentation
 
 - [docs/README.md](docs/README.md)
