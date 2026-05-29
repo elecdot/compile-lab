@@ -287,7 +287,17 @@ column : 当前列号
 
 ### 4.8 词法分析测试
 
-运行命令：
+Lab 1 测试包含指导书样例运行验证，以及输入缓冲区行为验证。指导书样例运行结果如下。
+
+![Lab 1 指导书样例运行截图](member-sources/lab1-media/media/image1.png)
+
+输入缓冲区验证说明：编译器不会在用户每输入一个字符时立即分析，而是在完整输入交给程序后统一进行词法分析。组员通过修改 `0x1f` 输入验证该行为：在提交输入前将 `0x` 和 `1f` 中间加入空格，程序按最终输入分别识别；提交输入后再修改原输入不会改变已经进入分析流程的内容。
+
+![Lab 1 输入缓冲区提交前修改验证](member-sources/lab1-media/media/image2.png)
+
+![Lab 1 输入缓冲区提交后修改验证](member-sources/lab1-media/media/image3.png)
+
+整合阶段补充的文本化样例用于自动化回归测试。运行命令：
 
 ```sh
 java -jar dist/compiler-lab.jar lab1 < examples/lab1/handout.in
@@ -482,7 +492,34 @@ P    [P -> L+]
 | 错误定位 | `Token.line`、`Token.column` 与 `Lexer.advancePos()` 维护行列 |
 | 续编译 | 出错后跳到同步符号继续分析，最终汇总错误 |
 
-非法八进制错误定位输出：
+Lab 2 扩展测试截图说明如下。
+
+用例 1：缺少分号隐式纠错。
+测试目标是验证 `begin...end` 内语句缺分号时的隐式分号纠正。输入为 `begin x = 1 y = 2 end`。预期行为是 `x=1` 后自动补分号，`y=2` 后自动补分号，并输出语法树和 2 条警告。
+
+![Lab 2 缺少分号隐式纠错测试截图](member-sources/lab2-media/media/image14.png)
+
+用例 2：缺表达式续编译。
+测试目标是验证等号后缺表达式时不会因第一个错误而停止。输入为 `begin x = ; y = 2; end`。预期行为是 `x=;` 处报告因子错误并继续分析，`y=2;` 正常解析，最终汇总 1 条错误。
+
+![Lab 2 缺表达式续编译测试截图](member-sources/lab2-media/media/image15.png)
+
+用例 3：非法整数错误定位。
+测试目标是验证非法八进制和非法十六进制的精确错误定位。输入为 `begin x = 09; y = 0xg; end`。预期行为是 `09` 报告非法八进制，`0xg` 报告非法十六进制，输出语法树并汇总 2 条带行列号的错误。
+
+![Lab 2 非法整数错误定位测试截图](member-sources/lab2-media/media/image16.png)
+
+用例 4：混合多种错误综合续编译。
+测试目标是验证多种错误共存时的续编译和错误汇总能力。输入为 `begin a = 08 + ; b = ; c = a * b; end`。预期行为是对非法八进制、缺表达式等错误分别报告，`c=a*b;` 继续正常解析，最终汇总 3 条错误。
+
+![Lab 2 混合多种错误续编译测试截图](member-sources/lab2-media/media/image17.png)
+
+用例 5：六种关系符正常工作验证。
+测试目标是验证全部六种关系运算符均被 `parseRelop()` 正确识别。输入包含 6 条 `if` 语句，分别使用 `>`、`<`、`=`、`>=`、`<=`、`<>`。预期行为是全部语句正常解析，语法树中依次出现六种关系运算符，无错误或警告。
+
+![Lab 2 六种关系符验证测试截图](member-sources/lab2-media/media/image18.png)
+
+整合阶段补充了 `.in` 与 `.expected` 形式的自动化回归用例。非法八进制错误定位输出：
 
 ```text
 P    [P -> L+]
@@ -1005,9 +1042,9 @@ t1 := a + 2
 z = t1
 ```
 
-## 8. 测试与可执行程序
+## 8. 自动化测试与可执行程序
 
-### 8.1 自动化测试
+### 8.1 自动化回归测试
 
 测试命令：
 
@@ -1019,7 +1056,7 @@ date && make test
 
 ![date && make test 成功截图](assets/make-test-success.png)
 
-通过结果：
+自动化用例通过结果：
 
 ```text
 ok lab1_sample
